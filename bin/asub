@@ -10,8 +10,12 @@ Version = AnyScheduler::VERSION
 
 parameters = {}
 opt = OptionParser.new
+opt.on('-t', '--show-template', 'show template') { |s|
+  $stdout.puts AnyScheduler.show_template
+  exit
+}
 opt.on('-s', '--show-param', 'show parameters required in template') { |s|
-  $stdout.puts AnyScheduler.show_param
+  $stdout.puts AnyScheduler.params_in_json
   exit
 }
 opt.on('-p', '--parameters=[PARAM]', 'parameters') {|param|
