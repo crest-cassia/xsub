@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+root = File.expand_path('../../', __FILE__)
+$:.unshift File.expand_path('lib', root)
+
+require 'any_scheduler'
+require 'optparse'
+
+Version = AnyScheduler::VERSION
+
+parameters = {}
+opt = OptionParser.new
+opt.on('-s', '--show-param', 'show parameters required in template') { |s|
+  $stdout.puts AnyScheduler.show_param
+  exit
+}
+opt.on('-p', '--parameters=[PARAM]', 'parameters') {|param|
+  parameters = param
+}
+opt.parse!(ARGV)
+
+AnyScheduler.submit(ARGV, parameters)
