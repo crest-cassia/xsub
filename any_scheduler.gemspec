@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = AnyScheduler::VERSION
   spec.authors       = ["Yohsuke Murase"]
   spec.email         = ["yohsuke.murase@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{A wrapper for job schedulers. You can submit jobs to various schedulers in a unified way.}
+  spec.summary       = %q{A wrapper for job schedulers.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
