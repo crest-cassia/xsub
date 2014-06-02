@@ -5,12 +5,13 @@ $:.unshift File.expand_path('lib', root)
 
 require 'any_scheduler'
 require 'optparse'
+require 'json'
 
 Version = AnyScheduler::VERSION
 
 parameters = {}
 opt = OptionParser.new
-opt.on('-t', '--show-template', 'show template') { |s|
+opt.on('-t', '--show-template', 'show template') { |t|
   $stdout.puts AnyScheduler.show_template
   exit
 }
@@ -19,7 +20,7 @@ opt.on('-s', '--show-param', 'show parameters required in template') { |s|
   exit
 }
 opt.on('-p', '--parameters=[PARAM]', 'parameters') {|param|
-  parameters = param
+  parameters = JSON.load(param) if param.size > 0
 }
 opt.parse!(ARGV)
 
