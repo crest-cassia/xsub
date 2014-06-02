@@ -7,55 +7,60 @@ require "any_scheduler/template"
 
 module AnyScheduler
 
-  extend self
-
-  @template = <<EOS
-#!/bin/bash
-LANG=C
-#PBS -l nodes=<%= num_nodes %>:ppn=<%= ppn %>
-#PBS -l walltime=<%= elapsed %>
-. <%= job_file %>
-EOS
-
-  @param = {
-    "num_nodes" => { description: "Number of nodes", default: 1},
-    "ppn" => { description: "Process per nodes", default: 4},
-    "elapsed" => { description: "Limit on elapsed time", default: "1:00:00"}
-  }
-
-  SCHEDULER_WORK_DIR = '~/anyscheduler'
-
-  def show_template
-    print @template
-  end
-
-  def params_in_json
-    JSON.pretty_generate(@param)
-  end
-
-  def render_template(parameters)
-    Template.render(@template, parameters)
-  end
-
-  def submit(args, parameters)
-    merged = parameters.merge( Hash[ @param.map {|k,v| [k,v[:default]] } ] )
-
-    args.each do |job_file|
-      script = write_job_script( merged.merge(job_file: job_file) )
-      cmd = "nohup bash #{script} > /dev/null 2>&1 < /dev/null & basename #{script}"
-      output = `#{cmd}`
-      $?.to_i == 0 ? output : "failed"
+  def self.scheduler(scheduler_type)
+    case scheduler_type.to_sym
+    when :none
+      require "any_scheduler/schedulers/none"
+      AnyScheduler::SchedulerNone.new
+    when :torque
+    when :pjm
+    else
+      raise "not supported type"
     end
   end
 
-  def write_job_script(parameters)
-    FileUtils.mkdir_p( File.expand_path(SCHEDULER_WORK_DIR) )
-    script = File.expand_path( File.join( SCHEDULER_WORK_DIR, "job.sh" ) )
-    File.open(script, 'w') { |io|
-      io.print render_template(parameters)
-      io.flush
-      io.close
-    }
-    script
+  class Base
+
+    def template
+      self.class::TEMPLATE
+    end
+
+    def parameter_definitions
+      self.class::PARAMETERS
+    end
+
+    def default_parameters
+      Hash[ parameter_definitions.map {|k,v| [k,v[:default]] } ]
+    end
+
+    def params_in_json
+      JSON.pretty_generate(parameter_definitions)
+    end
+
+    def render_template(parameters)
+      Template.render( template, parameters)
+    end
+
+    def submit(job_scritps, parameters)
+      merged = default_parameters.merge( parameters )
+
+      outputs = job_scritps.map do |job_script|
+        parent_script = render_template( merged.merge(job_file: job_script) )
+        ps_path = parent_script_path(job_script)
+        File.open( ps_path, 'w') {|f| f.write(parent_script); f.flush }
+        submit_job(ps_path)
+      end
+      outputs
+    end
+
+    def parent_script_path( job_script )
+      idx = 0
+      parent_script = job_script + ".#{idx}.sh"
+      while File.exist?(parent_script)
+        idx += 1
+        parent_script = job_script + ".#{idx}.sh"
+      end
+      parent_script
+    end
   end
 end

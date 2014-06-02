@@ -24,4 +24,4 @@ opt.on('-p', '--parameters=[PARAM]', 'parameters') {|param|
 }
 opt.parse!(ARGV)
 
-AnyScheduler.submit(ARGV, parameters)
+AnyScheduler.scheduler(:none).submit(ARGV, parameters)
