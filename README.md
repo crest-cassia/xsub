@@ -1,3 +1,5 @@
+(This repository is work in progress!)
+
 # AnyScheduler
 
 TODO: Write a gem description
