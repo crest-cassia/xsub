@@ -20,8 +20,9 @@ module AnyScheduler
       Template.render( template, parameters)
     end
 
-    def submit(job_scritps, parameters, logger = Logger.new(STDERR) )
+    def submit(job_scritps, parameters, logger: Logger.new(STDERR), work_dir: '.')
       @logger = logger
+      @work_dir = work_dir
 
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
