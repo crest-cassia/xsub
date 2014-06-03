@@ -9,19 +9,30 @@ require 'json'
 
 Version = AnyScheduler::VERSION
 
+scheduler = nil
 parameters = {}
-opt = OptionParser.new
-opt.on('-t', '--show-template', 'show template') { |t|
-  $stdout.puts AnyScheduler.show_template
-  exit
-}
-opt.on('-s', '--show-param', 'show parameters required in template') { |s|
-  $stdout.puts AnyScheduler.params_in_json
-  exit
-}
-opt.on('-p', '--parameters=[PARAM]', 'parameters') {|param|
-  parameters = JSON.load(param) if param.size > 0
-}
-opt.parse!(ARGV)
 
-AnyScheduler.scheduler(:none).submit(ARGV, parameters)
+OptionParser.new { |parser|
+  parser.on('-s', '--scheduler [TYPE]', "scheduler type") do |type|
+    type = type.sub(/^=/,'').to_sym
+    supported_types = AnyScheduler::SCHEDULER_TYPE.keys
+    unless supported_types.include?(type)
+      raise "#{type} is not found in supported types #{supported_types.inspect}"
+    end
+    scheduler = AnyScheduler.scheduler(type).new
+  end
+
+  parser.on('-t', '--show-template', 'show template') do |t|
+    raise "scheduler type is not given" unless scheduler
+    h = {parameters: scheduler.parameter_definitions, template: scheduler.template }
+    $stdout.print JSON.pretty_generate(h)
+    exit
+  end
+
+  parser.on('-p', '--parameters=[PARAM]', 'parameters') do |param|
+    parameters = JSON.load(param) if param.size > 0
+  end
+}.parse!(ARGV)
+
+raise "scheduler type is not given" unless scheduler
+scheduler.submit(ARGV, parameters)
