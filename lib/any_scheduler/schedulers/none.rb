@@ -1,3 +1,5 @@
+require "any_scheduler/base"
+
 module AnyScheduler
 
   class SchedulerNone < Base
