@@ -24,9 +24,9 @@ module AnyScheduler
       # You can override this method
     end
 
-    def submit(job_scritps, parameters, logger: Logger.new(STDERR), work_dir: '.')
-      @logger = logger
-      @work_dir = work_dir
+    def submit(job_scritps, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.'})
+      @logger = opt[:logger]
+      @work_dir = opt[:work_dir]
 
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
