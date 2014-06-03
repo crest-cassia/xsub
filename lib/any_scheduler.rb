@@ -6,11 +6,13 @@ require "any_scheduler/version"
 require "any_scheduler/template"
 require "any_scheduler/base"
 require "any_scheduler/schedulers/none"
+require "any_scheduler/schedulers/torque"
 
 module AnyScheduler
 
   SCHEDULER_TYPE = {
-    none: AnyScheduler::SchedulerNone
+    none: AnyScheduler::SchedulerNone,
+    torque: AnyScheduler::SchedulerTorque
   }
 
   def self.scheduler(scheduler_type)

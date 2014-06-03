@@ -20,12 +20,17 @@ module AnyScheduler
       Template.render( template, parameters)
     end
 
+    def validate_parameters(parameters)
+      # You can override this method
+    end
+
     def submit(job_scritps, parameters, logger: Logger.new(STDERR), work_dir: '.')
       @logger = logger
       @work_dir = work_dir
 
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
+      validate_parameters(merged)
 
       outputs = job_scritps.map do |job_script|
         begin
@@ -42,6 +47,8 @@ module AnyScheduler
         end
       end
       outputs
+    rescue => ex
+      @logger.error(ex)
     end
 
     def parent_script_path( job_script )
