@@ -6,11 +6,14 @@ $:.unshift File.expand_path('lib', root)
 require 'any_scheduler'
 require 'optparse'
 require 'json'
+require 'logger'
 
 Version = AnyScheduler::VERSION
 
 scheduler = nil
 parameters = {}
+logger = Logger.new(STDERR)
+LOG_ROTATE_SIZE = 7
 
 OptionParser.new { |parser|
   parser.on('-s', '--scheduler [TYPE]', "scheduler type") do |type|
@@ -29,10 +32,16 @@ OptionParser.new { |parser|
     exit
   end
 
-  parser.on('-p', '--parameters=[PARAM]', 'parameters') do |param|
-    parameters = JSON.load(param) if param.size > 0
+  parser.on('-p', '--parameters [PARAM]', 'parameters') do |param|
+    parameters = JSON.load(param.sub(/^=/,'')) if param.size > 0
   end
+
+  parser.on('-l', '--log [PARAM]', 'log file') do |log|
+    logger = Logger.new(log.sub(/^=/, ''), LOG_ROTATE_SIZE) if log.size > 0
+  end
+
 }.parse!(ARGV)
 
 raise "scheduler type is not given" unless scheduler
-scheduler.submit(ARGV, parameters)
+output = scheduler.submit(ARGV, parameters, logger)
+$stdout.print JSON.pretty_generate(output)
