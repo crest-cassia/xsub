@@ -30,14 +30,11 @@ EOS
     end
 
     def submit_job(script_path)
-      cmd = "qsub #{File.expand_path(script_path)}"
-      @logger.info "cmd: #{cmd}"
-      output = ""
       FileUtils.mkdir_p(@work_dir)
-      Dir.chdir(@work_dir) {
-        output = `#{cmd}`
-        raise "rc is not zero: #{output}" unless $?.to_i == 0
-      }
+      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(@work_dir)}"
+      @logger.info "cmd: #{cmd}"
+      output = `#{cmd}`
+      raise "rc is not zero: #{output}" unless $?.to_i == 0
       job_id = output.lines.last.to_i
       @logger.info "job_id: #{job_id}"
       {job_id: job_id, output: output}
