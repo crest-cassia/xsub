@@ -35,7 +35,7 @@ EOS
       @logger.info "cmd: #{cmd}"
       output = `#{cmd}`
       raise "rc is not zero: #{output}" unless $?.to_i == 0
-      job_id = output.lines.last.to_i
+      job_id = output.lines.to_a.last.to_i
       @logger.info "job_id: #{job_id}"
       {job_id: job_id, output: output}
     end

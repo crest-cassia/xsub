@@ -18,7 +18,7 @@ EOS
         output = `#{cmd}`
         raise "rc is not zero: #{output}" unless $?.to_i == 0
       }
-      psid = output.lines.last.to_i
+      psid = output.lines.to_a.last.to_i
       @logger.info "process id: #{psid}"
       {job_id: psid, output: output}
     end
