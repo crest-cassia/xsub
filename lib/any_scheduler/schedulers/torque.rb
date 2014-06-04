@@ -59,5 +59,11 @@ EOS
       end
       { status: status, detail: output }
     end
+
+    def delete(job_id)
+      cmd = "qdel #{job_id}"
+      output = `#{cmd}`
+      {detail: output}
+    end
   end
 end

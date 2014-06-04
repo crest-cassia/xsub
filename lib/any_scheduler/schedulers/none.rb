@@ -29,5 +29,18 @@ EOS
       status = $?.to_i == 0 ? :running : :finished
       { status: status, detail: output }
     end
+
+    def delete(job_id)
+      pgid = `ps -p #{job_id} -o "pgid"`.lines.to_a.last.to_i
+      if $?.to_i == 0
+        cmd = "kill -TERM -#{pgid}"
+        system(cmd)
+        raise "kill command failed: #{cmd}" unless $?.to_i == 0
+        output = "process is killed"
+      else
+        output = "Process is not found"
+      end
+      {detail: output}
+    end
   end
 end

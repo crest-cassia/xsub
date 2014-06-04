@@ -43,6 +43,10 @@ module AnyScheduler
       raise "Override me"
     end
 
+    def delete(job_id)
+      raise "Override me"
+    end
+
     private
     def default_parameters
       Hash[ parameter_definitions.map {|k,v| [k,v[:default]] } ]

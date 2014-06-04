@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+root = File.expand_path('../../', __FILE__)
+$:.unshift File.expand_path('lib', root)
+
+require 'any_scheduler'
+require 'json'
+
+Version = AnyScheduler::VERSION
+scheduler = AnyScheduler.load_scheduler
+
+raise "scheduler type is not given" unless scheduler
+job_id = ARGV[0]
+output = scheduler.delete(job_id)
+$stdout.print JSON.pretty_generate(output)
