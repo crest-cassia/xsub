@@ -12,18 +12,6 @@ module AnyScheduler
       self.class::PARAMETERS
     end
 
-    def default_parameters
-      Hash[ parameter_definitions.map {|k,v| [k,v[:default]] } ]
-    end
-
-    def render_template(parameters)
-      Template.render( template, parameters)
-    end
-
-    def validate_parameters(parameters)
-      # You can override this method
-    end
-
     def submit(job_scritps, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.'})
       @logger = opt[:logger]
       @work_dir = opt[:work_dir]
@@ -49,6 +37,19 @@ module AnyScheduler
       outputs
     rescue => ex
       @logger.error(ex)
+    end
+
+    private
+    def default_parameters
+      Hash[ parameter_definitions.map {|k,v| [k,v[:default]] } ]
+    end
+
+    def render_template(parameters)
+      Template.render( template, parameters)
+    end
+
+    def validate_parameters(parameters)
+      # You can override this method
     end
 
     def parent_script_path( job_script )
