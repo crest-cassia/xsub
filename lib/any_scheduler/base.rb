@@ -39,6 +39,10 @@ module AnyScheduler
       @logger.error(ex)
     end
 
+    def status(job_id)
+      raise "Override me"
+    end
+
     private
     def default_parameters
       Hash[ parameter_definitions.map {|k,v| [k,v[:default]] } ]
