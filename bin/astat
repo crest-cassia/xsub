@@ -4,9 +4,7 @@ root = File.expand_path('../../', __FILE__)
 $:.unshift File.expand_path('lib', root)
 
 require 'any_scheduler'
-require 'optparse'
 require 'json'
-require 'logger'
 
 Version = AnyScheduler::VERSION
 scheduler = AnyScheduler.load_scheduler
