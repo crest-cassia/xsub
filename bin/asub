@@ -9,23 +9,13 @@ require 'json'
 require 'logger'
 
 Version = AnyScheduler::VERSION
-
-scheduler = nil
+scheduler = AnyScheduler.load_scheduler
 parameters = {}
 logger = Logger.new(STDERR)
 LOG_ROTATE_SIZE = 7
 work_dir = '.'
 
 OptionParser.new { |parser|
-  parser.on('-s', '--scheduler [TYPE]', "scheduler type") do |type|
-    type = type.sub(/^=/,'').to_sym
-    supported_types = AnyScheduler::SCHEDULER_TYPE.keys
-    unless supported_types.include?(type)
-      raise "#{type} is not found in supported types #{supported_types.inspect}"
-    end
-    scheduler = AnyScheduler.scheduler(type).new
-  end
-
   parser.on('-t', '--show-template', 'show template') do |t|
     raise "scheduler type is not given" unless scheduler
     h = {parameters: scheduler.parameter_definitions, template: scheduler.template }
