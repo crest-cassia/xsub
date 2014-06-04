@@ -39,5 +39,25 @@ EOS
       @logger.info "job_id: #{job_id}"
       {job_id: job_id, output: output}
     end
+
+    def status(job_id)
+      cmd = "qstat #{job_id}"
+      output = `#{cmd}`
+      if $?.to_i == 0
+        status = case output.lines.to_a.last.split[4]
+        when /Q/
+          :queued
+        when /[RT]/
+          :running
+        when /C/
+          :finished
+        else
+          raise "unknown output: #{output}"
+        end
+      else
+        status = :finished
+      end
+      { status: status, detail: output }
+    end
   end
 end
