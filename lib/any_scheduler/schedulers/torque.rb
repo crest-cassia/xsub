@@ -63,6 +63,7 @@ EOS
     def delete(job_id)
       cmd = "qdel #{job_id}"
       output = `#{cmd}`
+      output = "qdel failed" unless $?.to_i == 0
       {detail: output}
     end
   end
