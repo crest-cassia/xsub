@@ -11,5 +11,9 @@ scheduler = AnyScheduler.load_scheduler
 
 raise "scheduler type is not given" unless scheduler
 job_id = ARGV[0]
-output = scheduler.status(job_id)
+if job_id
+  output = scheduler.status(job_id)
+else
+  output = scheduler.all_status
+end
 $stdout.print JSON.pretty_generate(output)

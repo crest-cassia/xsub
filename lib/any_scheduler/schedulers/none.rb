@@ -30,6 +30,12 @@ EOS
       { status: status, raw_output: output }
     end
 
+    def all_status
+      cmd = "ps uxr | head -n 10"
+      output = `#{cmd}`
+      {raw_output: output}
+    end
+
     def delete(job_id)
       pgid = `ps -p #{job_id} -o "pgid"`.lines.to_a.last.to_i
       if $?.to_i == 0
