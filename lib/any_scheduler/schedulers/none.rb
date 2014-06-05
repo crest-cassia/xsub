@@ -20,14 +20,14 @@ EOS
       }
       psid = output.lines.to_a.last.to_i
       @logger.info "process id: #{psid}"
-      {job_id: psid, output: output}
+      {job_id: psid, raw_output: output}
     end
 
     def status(job_id)
       cmd = "ps -p #{job_id}"
       output = `#{cmd}`
       status = $?.to_i == 0 ? :running : :finished
-      { status: status, detail: output }
+      { status: status, raw_output: output }
     end
 
     def delete(job_id)
@@ -40,7 +40,7 @@ EOS
       else
         output = "Process is not found"
       end
-      {detail: output}
+      {raw_output: output}
     end
   end
 end

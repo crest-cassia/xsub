@@ -37,7 +37,7 @@ EOS
       raise "rc is not zero: #{output}" unless $?.to_i == 0
       job_id = output.lines.to_a.last.to_i
       @logger.info "job_id: #{job_id}"
-      {job_id: job_id, output: output}
+      {job_id: job_id, raw_output: output}
     end
 
     def status(job_id)
@@ -57,14 +57,20 @@ EOS
       else
         status = :finished
       end
-      { status: status, detail: output }
+      { status: status, raw_output: output }
+    end
+
+    def all_status
+      cmd = "qstat && pbsnodes -a"
+      output = `#{cmd}`
+      { raw_output: output }
     end
 
     def delete(job_id)
       cmd = "qdel #{job_id}"
       output = `#{cmd}`
       output = "qdel failed" unless $?.to_i == 0
-      {detail: output}
+      {raw_output: output}
     end
   end
 end
