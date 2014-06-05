@@ -18,9 +18,9 @@ It prints JSON to the standard output. The format shown later is the minimal one
 
 ### asub
 
-A script to submit a job.
+submit a job to a scheduler
 
-- **usage**: `qsub {job_script}`
+- **usage**: `asub {job_script}`
 - **options**:
   - "-d WORKDIR" : set working directory
   - "-p PARAMETERS" : set parameters required to submit a job
@@ -64,12 +64,35 @@ A script to submit a job.
 
 ### astat
 
-(TODO)
+show a status of a job
+
+- **usage**: `astat {job_id}` or `astat`
+  - when "job_id" is given, show the status of the job
+  - when "job_id" is not given, show current the status of the scheduler
+
+- **output format**:
+  - when "job_id" is given, it prints JSON as follows.
+  ```json
+  {
+    "status": "running"
+  }
+  ```
+    - status field takes either "queued", "running", or "finished".
+      - "queued" means the job is in queue.
+      - "running" means the job is running.
+      - "finished" means the job is finished or the job is not found.
+  - when job_id is not given, the output format is arbitrary.
+    - it usually prints the output of `qsub` command.
 
 ### adel
 
-(TODO)
+delete a job
 
+- **usage**: `adel {job_id}`
+  - cancel the specified job
+    - if the job finished successfully, return code is zero.
+    - if the job is not found, it returns non-zero.
+  - output format is arbitrary.
 
 ## Installation
 
