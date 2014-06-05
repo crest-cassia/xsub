@@ -38,5 +38,6 @@ OptionParser.new { |parser|
 }.parse!(ARGV)
 
 raise "scheduler type is not given" unless scheduler
-output = scheduler.submit(ARGV, parameters, logger: logger, work_dir: work_dir)
+raise "you should give one argument" unless ARGV.size == 1
+output = scheduler.submit(ARGV[0], parameters, logger: logger, work_dir: work_dir)
 $stdout.print JSON.pretty_generate(output)

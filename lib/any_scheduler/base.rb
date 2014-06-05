@@ -12,7 +12,7 @@ module AnyScheduler
       self.class::PARAMETERS
     end
 
-    def submit(job_scritps, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.'})
+    def submit(job_script, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.'})
       @logger = opt[:logger]
       @work_dir = opt[:work_dir]
 
@@ -20,21 +20,13 @@ module AnyScheduler
       @logger.info "Parameters: #{merged.inspect}"
       validate_parameters(merged)
 
-      outputs = job_scritps.map do |job_script|
-        begin
-          parent_script = render_template( merged.merge(job_file: File.expand_path(job_script)) )
-          ps_path = parent_script_path(job_script)
-          @logger.info "Parent script for #{job_script}: #{ps_path}"
-          File.open( ps_path, 'w') {|f| f.write(parent_script); f.flush }
-          @logger.info "Parent script has been written"
-          output = submit_job(ps_path)
-          output[:job_script] = job_script
-          output
-        rescue => ex
-          @logger.error(ex)
-        end
-      end
-      outputs
+      parent_script = render_template( merged.merge(job_file: File.expand_path(job_script)) )
+      ps_path = parent_script_path(job_script)
+      @logger.info "Parent script for #{job_script}: #{ps_path}"
+      File.open( ps_path, 'w') {|f| f.write(parent_script); f.flush }
+      @logger.info "Parent script has been written"
+      output = submit_job(ps_path)
+      output
     rescue => ex
       @logger.error(ex)
     end
