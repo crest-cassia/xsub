@@ -1,7 +1,6 @@
 require 'pp'
 require 'json'
 require 'fileutils'
-require 'pry'
 require "any_scheduler/version"
 require "any_scheduler/template"
 require "any_scheduler/base"
