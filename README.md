@@ -11,16 +11,16 @@ This gem is one implementation that wraps Torque to have the proposed specificat
 
 ## Proposed Specification
 
-Scheduler has three commands **asub**, **astat**, and **adel**.
+Scheduler has three commands **xsub**, **xstat**, and **xdel**.
 These correspond to qsub, qstat, and qdel of Torque.
 
 It prints JSON to the standard output. The format shown later is the minimal one. You can add arbitrary fields if you want.
 
-### asub
+### xsub
 
 submit a job to a scheduler
 
-- **usage**: `asub {job_script}`
+- **usage**: `xsub {job_script}`
 - **options**:
   - "-d WORKDIR" : set working directory
   - "-p PARAMETERS" : set parameters required to submit a job
@@ -62,11 +62,11 @@ submit a job to a scheduler
   ```
   - When it succeeds, return code is zero. When it fails, return code is non-zero.
 
-### astat
+### xstat
 
 show a status of a job
 
-- **usage**: `astat {job_id}` or `astat`
+- **usage**: `xstat {job_id}` or `xstat`
   - when "job_id" is given, show the status of the job
   - when "job_id" is not given, show current the status of the scheduler
 
@@ -84,11 +84,11 @@ show a status of a job
   - when job_id is not given, the output format is arbitrary.
     - it usually prints the output of `qsub` command.
 
-### adel
+### xdel
 
 delete a job
 
-- **usage**: `adel {job_id}`
+- **usage**: `xdel {job_id}`
   - cancel the specified job
     - if the job finished successfully, return code is zero.
     - if the job is not found, it returns non-zero.
