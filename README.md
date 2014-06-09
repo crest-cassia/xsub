@@ -1,6 +1,6 @@
 (This repository is work in progress!)
 
-# AnyScheduler
+# eXtensible Scheduler
 
 A wrapper for job schedulers.
 Job schedulers used in HPCs, such as Torque, often have its own I/O format.
@@ -8,6 +8,7 @@ Users have to change their scripts to conform with its dialect.
 
 To solve this problem, we propose a unified I/O format for job scheduler.
 This gem is one implementation that wraps Torque to have the proposed specification.
+By extending this gem, you can use several kinds of schedulers using a unified format.
 
 ## Proposed Specification
 
