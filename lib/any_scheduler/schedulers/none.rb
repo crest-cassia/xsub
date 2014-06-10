@@ -20,20 +20,20 @@ EOS
       }
       psid = output.lines.to_a.last.to_i
       @logger.info "process id: #{psid}"
-      {job_id: psid, raw_output: output.lines.to_a}
+      {job_id: psid, raw_output: output.lines.map(&:chomp).to_a}
     end
 
     def status(job_id)
       cmd = "ps -p #{job_id}"
       output = `#{cmd}`
       status = $?.to_i == 0 ? :running : :finished
-      { status: status, raw_output: output.lines.to_a }
+      { status: status, raw_output: output.lines.map(&:chomp).to_a }
     end
 
     def all_status
       cmd = "ps uxr | head -n 10"
       output = `#{cmd}`
-      {raw_output: output.lines.to_a}
+      {raw_output: output.lines.map(&:chomp).to_a}
     end
 
     def delete(job_id)
@@ -46,7 +46,7 @@ EOS
       else
         output = "Process is not found"
       end
-      {raw_output: output.lines.to_a}
+      {raw_output: output.lines.map(&:chomp).to_a}
     end
   end
 end
