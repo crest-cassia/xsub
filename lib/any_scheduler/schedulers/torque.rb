@@ -5,7 +5,7 @@ module AnyScheduler
     TEMPLATE = <<EOS
 #!/bin/bash
 LANG=C
-#PBS -l nodes=<%= mpi_procs*omp_threads/ppn %>:ppn=<%= ppn %>
+#PBS -l nodes=<%= mpi_procs.to_i*omp_threads.to_i/ppn.to_i %>:ppn=<%= ppn %>
 #PBS -l walltime=<%= elapsed %>
 . <%= job_file %>
 EOS
