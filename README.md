@@ -24,6 +24,8 @@ submit a job to a scheduler
 - **usage**: `xsub {job_script}`
 - **options**:
   - "-d WORKDIR" : set working directory
+    - this directory is used to make a temporary job file or to store scheduler log files.
+    - when the job is executed, the current directory is set to this working directory.
   - "-p PARAMETERS" : set parameters required to submit a job
   - "-t" : show parameters to submit a job in JSON format. Job is not submitted.
 

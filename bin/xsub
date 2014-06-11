@@ -7,6 +7,7 @@ require 'any_scheduler'
 require 'optparse'
 require 'json'
 require 'logger'
+require 'fileutils'
 
 Version = AnyScheduler::VERSION
 scheduler = AnyScheduler.load_scheduler
@@ -27,12 +28,13 @@ OptionParser.new { |parser|
     parameters = JSON.load(param.sub(/^=/,'')) if param.size > 0
   end
 
-  parser.on('-l', '--log [PARAM]', 'log file') do |log|
-    logger = Logger.new(log.sub(/^=/, ''), LOG_ROTATE_SIZE) if log.size > 0
-  end
-
   parser.on('-d', '--dir [WORKDIR]', 'work directory') do |dir|
-    work_dir = dir.sub(/^=/, '') if dir.size > 0
+    if dir.size > 0
+      work_dir = dir.sub(/^=/, '')
+      FileUtils.mkdir_p(work_dir)
+      logfile = File.join(work_dir, "submission_log.txt")
+      logger = Logger.new(logfile , LOG_ROTATE_SIZE)
+    end
   end
 
 }.parse!(ARGV)

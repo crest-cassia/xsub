@@ -54,12 +54,12 @@ module AnyScheduler
 
     def parent_script_path( job_script )
       idx = 0
-      parent_script = job_script + ".#{idx}.sh"
+      parent_script = File.join(@work_dir, File.basename(job_script) + ".#{idx}.sh")
       while File.exist?(parent_script)
         idx += 1
-        parent_script = job_script + ".#{idx}.sh"
+        parent_script = File.join(@work_dir, File.basename(job_script) + ".#{idx}.sh")
       end
-      parent_script
+      File.expand_path(parent_script)
     end
   end
 end
