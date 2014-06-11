@@ -27,7 +27,7 @@ EOS
       cmd = "ps -p #{job_id}"
       output = `#{cmd}`
       status = $?.to_i == 0 ? :running : :finished
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { status: status, log_paths: [], raw_output: output.lines.map(&:chomp).to_a }
     end
 
     def all_status
