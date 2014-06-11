@@ -1,6 +1,6 @@
 require 'logger'
 
-module AnyScheduler
+module XScheduler
 
   class Base
 

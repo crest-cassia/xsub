@@ -5,7 +5,7 @@ require 'xscheduler/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "xscheduler"
-  spec.version       = AnyScheduler::VERSION
+  spec.version       = XScheduler::VERSION
   spec.authors       = ["Yohsuke Murase"]
   spec.email         = ["yohsuke.murase@gmail.com"]
   spec.description   = %q{A wrapper for job schedulers. You can submit jobs to various schedulers in a unified way.}

@@ -1,4 +1,4 @@
-module AnyScheduler
+module XScheduler
 
   class SchedulerTorque < Base
 

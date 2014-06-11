@@ -6,8 +6,8 @@ $:.unshift File.expand_path('lib', root)
 require 'xscheduler'
 require 'json'
 
-Version = AnyScheduler::VERSION
-scheduler = AnyScheduler.load_scheduler
+Version = XScheduler::VERSION
+scheduler = XScheduler.load_scheduler
 
 raise "scheduler type is not given" unless scheduler
 job_id = ARGV[0]

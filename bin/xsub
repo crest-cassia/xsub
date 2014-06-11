@@ -9,8 +9,8 @@ require 'json'
 require 'logger'
 require 'fileutils'
 
-Version = AnyScheduler::VERSION
-scheduler = AnyScheduler.load_scheduler
+Version = XScheduler::VERSION
+scheduler = XScheduler.load_scheduler
 parameters = {}
 logger = Logger.new(STDERR)
 LOG_ROTATE_SIZE = 7

@@ -1,10 +1,10 @@
-describe AnyScheduler do
+describe XScheduler do
 
   describe ".show_param" do
 
     it "prints parameters in json" do
-      json = AnyScheduler.params_in_json
-      JSON.load(json).should eq AnyScheduler.param
+      json = XScheduler.params_in_json
+      JSON.load(json).should eq XScheduler.param
     end
   end
 end

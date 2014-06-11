@@ -7,11 +7,11 @@ require "xscheduler/base"
 require "xscheduler/schedulers/none"
 require "xscheduler/schedulers/torque"
 
-module AnyScheduler
+module XScheduler
 
   SCHEDULER_TYPE = {
-    none: AnyScheduler::SchedulerNone,
-    torque: AnyScheduler::SchedulerTorque
+    none: XScheduler::SchedulerNone,
+    torque: XScheduler::SchedulerTorque
   }
 
   CONFIG_FILE_PATH = File.expand_path('~/.any_scheduler.json')
