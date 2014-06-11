@@ -28,6 +28,7 @@ submit a job to a scheduler
     - when the job is executed, the current directory is set to this working directory.
   - "-p PARAMETERS" : set parameters required to submit a job
   - "-t" : show parameters to submit a job in JSON format. Job is not submitted.
+  - "-l" : Log file path. If not this option is not given, the logs are printed to STDERR.
 
 - **output format**:
   - when "-t" option is given, it prints JSON as follows.

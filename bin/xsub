@@ -28,12 +28,17 @@ OptionParser.new { |parser|
     parameters = JSON.load(param.sub(/^=/,'')) if param.size > 0
   end
 
+  parser.on('-l', '--log [LOGFILE]', 'log file name') do |log|
+    if log.size > 0
+      logfile = log.sub(/^=/,'')
+      logger = Logger.new(logfile , LOG_ROTATE_SIZE)
+    end
+  end
+
   parser.on('-d', '--dir [WORKDIR]', 'work directory') do |dir|
     if dir.size > 0
       work_dir = dir.sub(/^=/, '')
       FileUtils.mkdir_p(work_dir)
-      logfile = File.join(work_dir, "submission_log.txt")
-      logger = Logger.new(logfile , LOG_ROTATE_SIZE)
     end
   end
 
