@@ -66,6 +66,12 @@ submit a job to a scheduler
   ```
   - When it succeeds, return code is zero. When it fails, return code is non-zero.
 
+- **example**
+
+```sh
+xsub job.sh -d work_dir -l work_dir/log.txt -p '{"mpi_procs":3,"omp_threads":4,"ppn":4,"elapsed":"2:00:00"}'
+```
+
 ### xstat
 
 show a status of a job
@@ -89,6 +95,12 @@ show a status of a job
     - "log_paths" fileds has an array of paths to scheduler log files.
   - when job_id is not given, the output format is arbitrary.
     - it usually prints the output of `qsub` command.
+
+- **example**
+
+```sh
+xstat 12345   # => { "status": "queued" }
+```
 
 ### xdel
 
