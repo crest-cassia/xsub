@@ -5,9 +5,8 @@ require 'fileutils'
 
 module XScheduler
 
-  module Submitter
+  module Submit
 
-    Version = XScheduler::VERSION
     LOG_ROTATE_SIZE = 7
 
     extend self
@@ -53,4 +52,26 @@ module XScheduler
 
     end
   end
+
+  module Status
+
+    extend self
+
+    def run(argv)
+
+      scheduler = XScheduler.load_scheduler
+
+      OptionParser.new.parse!(argv)
+
+      raise "scheduler type is not given" unless scheduler
+      job_id = argv[0]
+      if job_id
+        output = scheduler.status(job_id)
+      else
+        output = scheduler.all_status
+      end
+      $stdout.print JSON.pretty_generate(output)
+    end
+  end
+
 end

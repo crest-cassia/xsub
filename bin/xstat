@@ -4,16 +4,7 @@ root = File.expand_path('../../', __FILE__)
 $:.unshift File.expand_path('lib', root)
 
 require 'xscheduler'
-require 'json'
-
+require 'xscheduler/runner'
 Version = XScheduler::VERSION
-scheduler = XScheduler.load_scheduler
 
-raise "scheduler type is not given" unless scheduler
-job_id = ARGV[0]
-if job_id
-  output = scheduler.status(job_id)
-else
-  output = scheduler.all_status
-end
-$stdout.print JSON.pretty_generate(output)
+XScheduler::Status.run(ARGV)
