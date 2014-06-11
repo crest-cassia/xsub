@@ -75,13 +75,15 @@ show a status of a job
   - when "job_id" is given, it prints JSON as follows.
   ```json
   {
-    "status": "running"
+    "status": "running",
+    "log_paths": ["/foo/bar/scheduler_log.o12345", "/foo/bar/scheduler_log.e12345"]
   }
   ```
     - status field takes either "queued", "running", or "finished".
       - "queued" means the job is in queue.
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
+    - "log_paths" fileds has an array of paths to scheduler log files.
   - when job_id is not given, the output format is arbitrary.
     - it usually prints the output of `qsub` command.
 
