@@ -58,11 +58,9 @@ module XScheduler
     extend self
 
     def run(argv)
-
-      scheduler = XScheduler.load_scheduler
-
       OptionParser.new.parse!(argv)
 
+      scheduler = XScheduler.load_scheduler
       raise "scheduler type is not given" unless scheduler
       job_id = argv[0]
       if job_id
@@ -74,4 +72,20 @@ module XScheduler
     end
   end
 
+  module Delete
+
+    extend self
+
+    def run(argv)
+      OptionParser.new.parse!(argv)
+
+      scheduler = XScheduler.load_scheduler
+      raise "scheduler type is not given" unless scheduler
+      job_id = argv[0]
+      if job_id
+        output = scheduler.delete(job_id)
+        $stdout.print JSON.pretty_generate(output)
+      end
+    end
+  end
 end
