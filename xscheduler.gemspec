@@ -1,10 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'any_scheduler/version'
+require 'xscheduler/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "any_scheduler"
+  spec.name          = "xscheduler"
   spec.version       = AnyScheduler::VERSION
   spec.authors       = ["Yohsuke Murase"]
   spec.email         = ["yohsuke.murase@gmail.com"]

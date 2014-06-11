@@ -3,7 +3,7 @@
 root = File.expand_path('../../', __FILE__)
 $:.unshift File.expand_path('lib', root)
 
-require 'any_scheduler'
+require 'xscheduler'
 require 'optparse'
 require 'json'
 require 'logger'

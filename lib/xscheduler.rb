@@ -1,11 +1,11 @@
 require 'pp'
 require 'json'
 require 'fileutils'
-require "any_scheduler/version"
-require "any_scheduler/template"
-require "any_scheduler/base"
-require "any_scheduler/schedulers/none"
-require "any_scheduler/schedulers/torque"
+require "xscheduler/version"
+require "xscheduler/template"
+require "xscheduler/base"
+require "xscheduler/schedulers/none"
+require "xscheduler/schedulers/torque"
 
 module AnyScheduler
 

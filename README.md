@@ -116,7 +116,7 @@ delete a job
 
 Add this line to your application's Gemfile:
 
-    gem 'any_scheduler'
+    gem 'xscheduler'
 
 And then execute:
 
@@ -124,7 +124,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install any_scheduler
+    $ gem install xscheduler
 
 ## Usage
 
