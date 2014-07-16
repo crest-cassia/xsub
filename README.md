@@ -93,8 +93,14 @@ show a status of a job
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
     - "log_paths" fileds has an array of paths to scheduler log files.
-  - when job_id is not given, the output format is arbitrary.
-    - it usually prints the output of `qsub` command.
+  - when job_id is not given, the output is a collection of the above objects.
+  ```json
+  {
+    "12345": { "status": "queued" },
+    "12346": { "status": "running", "log_paths": [] },
+    "12347": { "status": "finished", "log_paths": [] }
+  }
+  ```
 
 - **example**
 
@@ -125,10 +131,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install xscheduler
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
