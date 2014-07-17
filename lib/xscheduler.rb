@@ -14,14 +14,14 @@ module XScheduler
     torque: XScheduler::SchedulerTorque
   }
 
-  CONFIG_FILE_PATH = File.expand_path('~/.xsub.json')
+  CONFIG_FILE_PATH = File.expand_path('~/.xsub')
 
   def self.load_scheduler
     unless File.exist?(CONFIG_FILE_PATH)
       $stderr.puts "Create config file #{CONFIG_FILE_PATH}"
       raise "Config file (#{CONFIG_FILE_PATH}) not found"
     end
-    type = JSON.load(File.open(CONFIG_FILE_PATH))["scheduler_type"].to_sym
+    type = File.open(CONFIG_FILE_PATH).read.chomp.to_sym
     scheduler(type)
   end
 
