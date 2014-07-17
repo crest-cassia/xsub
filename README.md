@@ -126,6 +126,14 @@ Or install it yourself as:
 
     $ gem install xscheduler
 
+## Usage
+
+Please first set scheduler type.
+
+- Currently available scheduler type is "none" and "torque".
+- To use "none", `echo none > ~/.xsub`
+- To use "torque", `echo torque > ~/.xsub`
+
 ## Contributing
 
 1. Fork it
