@@ -14,7 +14,7 @@ module XScheduler
     torque: XScheduler::SchedulerTorque
   }
 
-  CONFIG_FILE_PATH = File.expand_path('~/.any_scheduler.json')
+  CONFIG_FILE_PATH = File.expand_path('~/.xsub.json')
 
   def self.load_scheduler
     unless File.exist?(CONFIG_FILE_PATH)
