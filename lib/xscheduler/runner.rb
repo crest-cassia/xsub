@@ -46,7 +46,7 @@ module XScheduler
       }.parse!(argv)
 
       raise "scheduler type is not given" unless scheduler
-      raise "you should give one argument" unless argv.size == 1
+      raise "you should give a script to submit" unless argv.size == 1
       output = scheduler.submit(argv[0], parameters, logger: logger, work_dir: work_dir)
       $stdout.print JSON.pretty_generate(output)
 
