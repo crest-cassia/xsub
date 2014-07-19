@@ -55,10 +55,10 @@ module XScheduler
 
     def parent_script_path( job_script )
       idx = 0
-      parent_script = File.join(@work_dir, File.basename(job_script) + ".#{idx}.sh")
+      parent_script = File.join(@work_dir, File.basename(job_script,'.sh') + "_xsub.sh")
       while File.exist?(parent_script)
         idx += 1
-        parent_script = File.join(@work_dir, File.basename(job_script) + ".#{idx}.sh")
+        parent_script = File.join(@work_dir, File.basename(job_script,'.sh') + "_xsub#{idx}.sh")
       end
       File.expand_path(parent_script)
     end
