@@ -12,9 +12,10 @@ module XScheduler
       self.class::PARAMETERS
     end
 
-    def submit(job_script, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.'})
+    def submit(job_script, parameters, opt = {logger: Logger.new(STDERR), work_dir: '.', log_dir: '.'})
       @logger = opt[:logger]
       @work_dir = opt[:work_dir]
+      @log_dir = opt[:log_dir]
 
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
