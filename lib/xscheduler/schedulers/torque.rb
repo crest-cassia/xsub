@@ -31,7 +31,7 @@ EOS
 
     def submit_job(script_path)
       FileUtils.mkdir_p(@work_dir)
-      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(@work_dir)} -i #{File.expand_path(@log_dir)} -o #{File.expand_path(@log_dir)}"
+      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(@work_dir)} -o #{File.expand_path(@log_dir)} -e #{File.expand_path(@log_dir)}"
       @logger.info "cmd: #{cmd}"
       output = `#{cmd}`
       raise "rc is not zero: #{output}" unless $?.to_i == 0
