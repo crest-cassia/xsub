@@ -7,13 +7,15 @@ require "xsub/base"
 require "xsub/schedulers/none"
 require "xsub/schedulers/torque"
 require "xsub/schedulers/fx10"
+require "xsub/schedulers/k"
 
 module Xsub
 
   SCHEDULER_TYPE = {
     none: Xsub::SchedulerNone,
     torque: Xsub::SchedulerTorque,
-    fx10: Xsub::SchedulerFx10
+    fx10: Xsub::SchedulerFx10,
+    k: Xsub::SchedulerK
   }
 
   def self.load_scheduler
