@@ -88,7 +88,6 @@ show a status of a job
   ```json
   {
     "status": "running",
-    "log_paths": ["/foo/bar/scheduler_log.o12345", "/foo/bar/scheduler_log.e12345"]
   }
   ```
     - status field takes either "queued", "running", or "finished".

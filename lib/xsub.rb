@@ -14,20 +14,19 @@ module Xsub
     torque: Xsub::SchedulerTorque
   }
 
-  CONFIG_FILE_PATH = File.expand_path('~/.xsub')
-
   def self.load_scheduler
-    unless File.exist?(CONFIG_FILE_PATH)
-      $stderr.puts "Create config file #{CONFIG_FILE_PATH}"
-      raise "Config file (#{CONFIG_FILE_PATH}) not found"
+    type = ENV['XSUB_TYPE']
+    unless type
+      $stderr.puts "Set environment variable 'XSUB_TYPE'"
+      $stderr.puts "  You can set #{SCHEDULER_TYPE.keys.inspect}"
+      raise " XSUB_TYPE is not set"
     end
-    type = File.open(CONFIG_FILE_PATH).read.chomp.to_sym
     scheduler(type)
   end
 
   def self.scheduler(scheduler_type)
     key = scheduler_type.to_sym
-    raise "not supported type" unless SCHEDULER_TYPE.has_key?(key)
+    raise "unknown type: #{scheduler_type}" unless SCHEDULER_TYPE.has_key?(key)
     SCHEDULER_TYPE[scheduler_type.to_sym].new
   end
 end
