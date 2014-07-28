@@ -6,6 +6,7 @@ A wrapper for job schedulers.
 Job schedulers used in HPCs, such as Torque, often have its own I/O format.
 Users have to change their scripts to conform with its dialect.
 This is a wrapper script to absorb the differences.
+This script is intended to use for OACIS (https://github.com/crest-cassia/oacis).
 
 Although only torque is currently supported, you can extend this in order to fit your schedulers.
 
