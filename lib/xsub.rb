@@ -6,12 +6,14 @@ require "xsub/template"
 require "xsub/base"
 require "xsub/schedulers/none"
 require "xsub/schedulers/torque"
+require "xsub/schedulers/fx10"
 
 module Xsub
 
   SCHEDULER_TYPE = {
     none: Xsub::SchedulerNone,
-    torque: Xsub::SchedulerTorque
+    torque: Xsub::SchedulerTorque,
+    fx10: Xsub::SchedulerFx10
   }
 
   def self.load_scheduler
