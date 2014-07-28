@@ -10,12 +10,15 @@ module Xsub
 #PJM --mpi "shape=<%= ((mpi_procs*omp_threads)/8.0).ceil %>"
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --stg-transfiles all
-#PJM --stgin-dir "<%= @work_dir %> ./<%= File.basename(@work_dir) %>"
-#PJM --stdout-dir ". <%= File.join(@work_dir,'..') %>"
+#PJM --stgin "<%= job_file %> <%= File.basename(job_file) %>"
+#PJM --stgin-dir "<%= File.expand_path(@work_dir) %> ./<%= File.basename(@work_dir) %>"
+#PJM --stgout "./* <%= File.join(@work_dir,'..') %>"
+#PJM --stgout "./<%= File.basename(@work_dir) %>/* <%= File.expand_path(@work_dir) %>/"
 #PJM -s
+cd ./<%= File.basename(@work_dir) %>
 LANG=C
 . /work/system/Env_base
-. <%= job_file %>
+. <%= File.join('..', File.basename(job_file)) %>
 EOS
 
     PARAMETERS = {
@@ -61,7 +64,7 @@ EOS
     end
 
     def status(job_id)
-      cmd = "qstat #{job_id}"
+      cmd = "pjstat #{job_id}"
       output = `#{cmd}`
       if $?.to_i == 0
         status = case output.lines.to_a.last.split[3]
@@ -72,7 +75,7 @@ EOS
         when /EXT|CCL/
           :finished
         else
-          raise "unknown output: #{output}"
+          :finished
         end
       else
         status = :finished

@@ -46,8 +46,14 @@ module Xsub
     end
 
     def render_template(parameters)
-      Template.render( template, parameters)
+      b = binding
+      parameters.each do |name, value|
+        b.eval("#{name} = #{value.inspect}")
+      end
+      ERB.new(self.class::TEMPLATE).result(b)
     end
+      #Template.render( template, parameters)
+    #end
 
     def validate_parameters(parameters)
       # You can override this method

@@ -46,7 +46,7 @@ EOS
     end
 
     def status(job_id)
-      cmd = "qstat #{job_id}"
+      cmd = "pjstat #{job_id}"
       output = `#{cmd}`
       if $?.to_i == 0
         status = case output.lines.to_a.last.split[3]
@@ -57,7 +57,7 @@ EOS
         when /EXT|CCL/
           :finished
         else
-          raise "unknown output: #{output}"
+          :finished
         end
       else
         status = :finished
