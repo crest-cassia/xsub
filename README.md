@@ -125,8 +125,8 @@ Clone this repository:
 Please first set scheduler type.
 
 - Currently available scheduler type is "none" and "torque".
-- To use "none", `echo none > ~/.xsub`
-- To use "torque", `echo torque > ~/.xsub`
+- To use "none", `export XSUB_TYPE=none`
+- To use "torque", `export XSUB_TYPE=torque`
 
 ## Contributing
 
