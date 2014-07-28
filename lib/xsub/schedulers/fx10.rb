@@ -6,7 +6,7 @@ module Xsub
 #!/bin/bash
 #
 #PJM --rsc-list "node=<%= ((mpi_procs*omp_threads)/8.0).ceil %>"
-#PJM --rsc-list "elapse=<%= elapsed %>"
+#PJM --rsc-list "elapse=<%= elapse %>"
 #PJM -s
 
 LANG=C
