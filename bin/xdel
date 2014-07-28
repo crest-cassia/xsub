@@ -3,8 +3,8 @@
 root = File.expand_path('../../', __FILE__)
 $:.unshift File.expand_path('lib', root)
 
-require 'xscheduler'
-require 'xscheduler/runner'
-Version = XScheduler::VERSION
+require 'xusb'
+require 'xusb/runner'
+Version = Xsub::VERSION
 
-XScheduler::Delete.run(ARGV)
+Xsub::Delete.run(ARGV)

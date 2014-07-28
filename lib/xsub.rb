@@ -1,17 +1,17 @@
 require 'pp'
 require 'json'
 require 'fileutils'
-require "xscheduler/version"
-require "xscheduler/template"
-require "xscheduler/base"
-require "xscheduler/schedulers/none"
-require "xscheduler/schedulers/torque"
+require "xsub/version"
+require "xsub/template"
+require "xsub/base"
+require "xsub/schedulers/none"
+require "xsub/schedulers/torque"
 
-module XScheduler
+module Xsub
 
   SCHEDULER_TYPE = {
-    none: XScheduler::SchedulerNone,
-    torque: XScheduler::SchedulerTorque
+    none: Xsub::SchedulerNone,
+    torque: Xsub::SchedulerTorque
   }
 
   CONFIG_FILE_PATH = File.expand_path('~/.xsub')

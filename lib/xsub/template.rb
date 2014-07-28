@@ -1,6 +1,6 @@
 require 'erb'
 
-module XScheduler
+module Xsub
 
   module Template
     def self.render( template, variables )

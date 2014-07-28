@@ -1,4 +1,4 @@
-module XScheduler
+module Xsub
 
   class SchedulerNone < Base
 

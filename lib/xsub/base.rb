@@ -1,6 +1,6 @@
 require 'logger'
 
-module XScheduler
+module Xsub
 
   class Base
 

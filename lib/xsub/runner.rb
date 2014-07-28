@@ -3,7 +3,7 @@ require 'json'
 require 'logger'
 require 'fileutils'
 
-module XScheduler
+module Xsub
 
   module Submit
 
@@ -12,7 +12,7 @@ module XScheduler
     extend self
 
     def run(argv)
-      scheduler = XScheduler.load_scheduler
+      scheduler = Xsub.load_scheduler
       parameters = {}
       logger = Logger.new(STDERR)
       work_dir = '.'
@@ -63,7 +63,7 @@ module XScheduler
     def run(argv)
       OptionParser.new.parse!(argv)
 
-      scheduler = XScheduler.load_scheduler
+      scheduler = Xsub.load_scheduler
       raise "scheduler type is not given" unless scheduler
       job_id = argv[0]
       if job_id
@@ -82,7 +82,7 @@ module XScheduler
     def run(argv)
       OptionParser.new.parse!(argv)
 
-      scheduler = XScheduler.load_scheduler
+      scheduler = Xsub.load_scheduler
       raise "scheduler type is not given" unless scheduler
       job_id = argv[0]
       if job_id
