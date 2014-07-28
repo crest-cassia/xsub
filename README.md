@@ -1,21 +1,21 @@
 (This repository is work in progress!)
 
-# eXtensible Scheduler
+# xsub
 
 A wrapper for job schedulers.
 Job schedulers used in HPCs, such as Torque, often have its own I/O format.
 Users have to change their scripts to conform with its dialect.
+This is a wrapper script to absorb the differences.
 
-To solve this problem, we propose a unified I/O format for job scheduler.
-This gem is one implementation that wraps Torque to have the proposed specification.
-By extending this gem, you can use several kinds of schedulers using a unified format.
+Although only torque is currently supported, you can extend this in order to fit your schedulers.
 
-## Proposed Specification
+## Specification
 
-Scheduler has three commands **xsub**, **xstat**, and **xdel**.
+Three commands **xsub**, **xstat**, and **xdel** are provided.
 These correspond to qsub, qstat, and qdel of Torque.
 
-It prints JSON to the standard output. The format shown later is the minimal one. You can add arbitrary fields if you want.
+It prints JSON to the standard output so that the outputs are easily handled by other programs.
+When you extend this library, you need to conform to the following specification.
 
 ### xsub
 
@@ -24,11 +24,13 @@ submit a job to a scheduler
 - **usage**: `xsub {job_script}`
 - **options**:
   - "-d WORKDIR" : set working directory
-    - this directory is used to make a temporary job file or to store scheduler log files.
     - when the job is executed, the current directory is set to this working directory.
+    - if the directory does not exist, a new directory is created.
   - "-p PARAMETERS" : set parameters required to submit a job
   - "-t" : show parameters to submit a job in JSON format. Job is not submitted.
-  - "-l" : Log file path. If not this option is not given, the logs are printed to STDERR.
+  - "-l" : Path to the log file directory.
+    - If this option is not given, the logs are printed in the current directory.
+    - If the directory does not exist, a new directory is created.
 
 - **output format**:
   - when "-t" option is given, it prints JSON as follows.
@@ -114,17 +116,9 @@ delete a job
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Clone this repository:
 
-    gem 'xscheduler'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install xscheduler
+  git@github.com:crest-cassia/xsub.git
 
 ## Usage
 
