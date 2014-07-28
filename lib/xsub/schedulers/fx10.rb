@@ -32,8 +32,8 @@ EOS
       FileUtils.mkdir_p(@work_dir)
       FileUtils.mkdir_p(@log_dir)
       stdout_path = File.join( File.expand_path(@log_dir), '%j.o')
-      stderr_path = File.join( File.expand_path(@log_dir), '%j.o')
-      job_stat_path = File.join( File.expand_path(@log_dir), '%i.o')
+      stderr_path = File.join( File.expand_path(@log_dir), '%j.e')
+      job_stat_path = File.join( File.expand_path(@log_dir), '%j.i')
 
       cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
       @logger.info "cmd: #{cmd}"
