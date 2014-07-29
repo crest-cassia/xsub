@@ -12,7 +12,7 @@ module Xsub
 #PJM --stg-transfiles all
 #PJM --stgin "<%= job_file %> <%= File.basename(job_file) %>"
 #PJM --stgin-dir "<%= File.expand_path(@work_dir) %> ./<%= File.basename(@work_dir) %>"
-#PJM --stgout "./* <%= File.join(@work_dir,'..') %>"
+#PJM --stgout "./* <%= File.expand_path(File.join(@work_dir,'..')) %>/"
 #PJM --stgout "./<%= File.basename(@work_dir) %>/* <%= File.expand_path(@work_dir) %>/"
 #PJM -s
 cd ./<%= File.basename(@work_dir) %>
@@ -84,7 +84,7 @@ EOS
     end
 
     def all_status
-      cmd = "pjstat -A"
+      cmd = "pjstat"
       output = `#{cmd}`
       { raw_output: output.lines.map(&:chomp).to_a }
     end

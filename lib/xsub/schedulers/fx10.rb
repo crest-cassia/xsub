@@ -66,7 +66,7 @@ EOS
     end
 
     def all_status
-      cmd = "pjstat -A"
+      cmd = "pjstat"
       output = `#{cmd}`
       { raw_output: output.lines.map(&:chomp).to_a }
     end
