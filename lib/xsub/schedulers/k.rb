@@ -42,7 +42,7 @@ EOS
       stderr_path = File.join( File.expand_path(@log_dir), '%j.e')
       job_stat_path = File.join( File.expand_path(@log_dir), '%j.i')
 
-      cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
+      cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path} < /dev/null"
       @logger.info "cmd: #{cmd}"
       output = `#{cmd}`
       raise "rc is not zero: #{output}" unless $?.to_i == 0
