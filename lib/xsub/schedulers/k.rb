@@ -22,11 +22,11 @@ LANG=C
 EOS
 
     PARAMETERS = {
-      "node" => { description: "Nodes", default: "1"},
-      "shape" => { description: "Shape", default: "1"},
       "mpi_procs" => { description: "MPI process", default: 1},
       "omp_threads" => { description: "OMP threads", default: 1},
-      "elapse" => { description: "Limit on elapsed time", default: "1:00:00"}
+      "elapse" => { description: "Limit on elapsed time", default: "1:00:00"},
+      "node" => { description: "Nodes", default: "1"},
+      "shape" => { description: "Shape", default: "1"}
     }
 
     def validate_parameters(prm)
