@@ -5,9 +5,9 @@ module Xsub
     TEMPLATE = <<EOS
 #!/bin/bash
 #
-#PJM --rsc-list "node=<%= ((mpi_procs*omp_threads)/8.0).ceil %>"
+#PJM --rsc-list "node=<%= node %>"
 #PJM --rsc-list "elapse=<%= elapse %>"
-#PJM --mpi "shape=<%= ((mpi_procs*omp_threads)/8.0).ceil %>"
+#PJM --mpi "shape=<%= shape %>"
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM -s
 LANG=C
@@ -18,7 +18,9 @@ EOS
     PARAMETERS = {
       "mpi_procs" => { description: "MPI process", default: 1},
       "omp_threads" => { description: "OMP threads", default: 1},
-      "elapse" => { description: "Limit on elapsed time", default: "1:00:00"}
+      "elapse" => { description: "Limit on elapsed time", default: "1:00:00"},
+      "node" => { description: "Nodes", default: "1"},
+      "shape" => { description: "Shape", default: "1"}
     }
 
     def validate_parameters(prm)
@@ -27,14 +29,36 @@ EOS
       unless mpi >= 1 and omp >= 1
         raise "mpi_procs and omp_threads must be larger than or equal to 1"
       end
+      node = prm["node"]
+      unless node =~ /^[\d]+x[\d]+x[\d]$/ or node =~ /^[\d]+x[\d]+$/ or node =~ /^[\d]+$/
+        raise "node must be like 12, 4x3 or 2x3x2"
+      end
+      shape = prm["shape"]
+      unless shape =~ /^[\d]+x[\d]+x[\d]$/ or shape =~ /^[\d]+x[\d]+$/ or shape =~ /^[\d]+$/
+        raise "shape must be like 12, 4x3 or 2x3x2"
+      end
+      tmp_node = node.split("x")
+      tmp_shape = shape.split("x")
+      unless tmp_node.length == tmp_shape.length
+        raise "node and shape must be a same format like node=>4x3, shape=>1x1"
+      end
+      tmp_node.each_with_index do |n, i|
+        unless n >= tmp_shape[i]
+          raise "each # in shape must be smaller than the one of node"
+        end
+      end
+      max_proc = tmp_shape.map {|s| s.to_i }.inject(:*)*8
+      unless mpi <= max_proc
+        raise "mpi_porc must be less than or equal to #{max_proc}"
+      end
     end
 
     def submit_job(script_path)
       FileUtils.mkdir_p(@work_dir)
       FileUtils.mkdir_p(@log_dir)
-      stdout_path = File.join( File.expand_path(@log_dir), '%j.o')
-      stderr_path = File.join( File.expand_path(@log_dir), '%j.e')
-      job_stat_path = File.join( File.expand_path(@log_dir), '%j.i')
+      stdout_path = File.join( File.expand_path(@log_dir), '%j.o.txt')
+      stderr_path = File.join( File.expand_path(@log_dir), '%j.e.txt')
+      job_stat_path = File.join( File.expand_path(@log_dir), '%j.i.txt')
 
       cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
       @logger.info "cmd: #{cmd}"
@@ -66,7 +90,7 @@ EOS
     end
 
     def all_status
-      cmd = "pjstat -A"
+      cmd = "pjstat"
       output = `#{cmd}`
       { raw_output: output.lines.map(&:chomp).to_a }
     end
