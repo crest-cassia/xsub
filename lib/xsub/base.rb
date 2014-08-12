@@ -31,6 +31,7 @@ module Xsub
       output
     rescue => ex
       @logger.error(ex)
+      raise ex
     end
 
     def status(job_id)
