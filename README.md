@@ -1,5 +1,3 @@
-(This repository is work in progress!)
-
 # xsub
 
 A wrapper for job schedulers.
@@ -8,7 +6,7 @@ Users have to change their scripts to conform with its dialect.
 This is a wrapper script to absorb the differences.
 This script is intended to use for OACIS (https://github.com/crest-cassia/oacis).
 
-Although only torque is currently supported, you can extend this in order to fit your schedulers.
+Although only a few types of schedulers are currently supported, you can extend this in order to fit your schedulers.
 
 ## Specification
 
@@ -16,7 +14,6 @@ Three commands **xsub**, **xstat**, and **xdel** are provided.
 These correspond to qsub, qstat, and qdel of Torque.
 
 It prints JSON to the standard output so that the outputs are easily handled by other programs.
-When you extend this library, you need to conform to the following specification.
 
 ### xsub
 
@@ -116,17 +113,29 @@ delete a job
 
 ## Installation
 
-Clone this repository:
+- Clone this repository
 
-  git@github.com:crest-cassia/xsub.git
+  ```
+  git clone https://github.com/crest-cassia/xsub.git
+  ```
 
-## Usage
+- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bashrc (or ~/.zshrc)
+  - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
+  - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
 
-Please first set scheduler type.
+  ```sh:.bashrc
+  export PATH="$HOME/work/xsub/bin:$PATH"
+  export XSUB_TYPE="torque"
+  ```
 
-- Currently available scheduler type is "none" and "torque".
-- To use "none", `export XSUB_TYPE=none`
-- To use "torque", `export XSUB_TYPE=torque`
+## Extending
+
+- If your scheduler is not supported, you can extend xsub by yourself.
+  - Fork the repository.
+  - Add your file to `lib/xsub/schedulers` and edit `lib/xsub.rb` properly.
+    - Because this library is small, you can read the whole source code easily.
+    - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
+- If you are not familiar with Ruby, please contact us.
 
 ## Contributing
 
