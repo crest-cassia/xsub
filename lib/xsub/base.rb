@@ -19,6 +19,7 @@ module Xsub
 
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
+      verify_no_unknown_parameter(merged)
       validate_parameters(merged)
 
       parent_script = render_template( merged.merge(job_file: File.expand_path(job_script)) )
@@ -57,6 +58,13 @@ module Xsub
 
     def validate_parameters(parameters)
       # You can override this method
+    end
+
+    def verify_no_unknown_parameter(parameters)
+      extra = parameters.keys - default_parameters.keys
+      unless extra.empty?
+        raise "Unknown parameter exist : #{extra.inspect}"
+      end
     end
 
     def parent_script_path( job_script )
