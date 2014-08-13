@@ -22,11 +22,11 @@ LANG=C
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: "^([1-9]|[1-9][\\d]+)$"},
-      "omp_threads" => { description: "OMP threads", default: 1, format: "^([1-9]|[1-9][\\d]+)$"},
-      "elapse" => { description: "Limit on elapsed time", default: "1:00:00", format: "^([01]?[0-9]|2[0-4]):([0-5][\\d]):([0-5][\\d])$"},
-      "node" => { description: "Nodes", default: "1", format: "^([1-9]|[1-9][\\d]+)$|^([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)$|^([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)$"},
-      "shape" => { description: "Shape", default: "1", format: "^([1-9]|[1-9][\\d]+)$|^([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)$|^([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)x([1-9]|[1-9][\\d]+)$"}
+      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
+      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
+      "elapse" => { description: "Limit on elapsed time", default: "1:00:00", format: '^\d+:\d{2}:\d{2}$'},
+      "node" => { description: "Nodes", default: "1", format: '^\d+(x\d+){0,2}?$'},
+      "shape" => { description: "Shape", default: "1", format: '^\d+(x\d+){0,2}?$'}
     }
 
     def validate_parameters(prm)
