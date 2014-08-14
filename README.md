@@ -4,7 +4,7 @@ A wrapper for job schedulers.
 Job schedulers used in HPCs, such as Torque, often have its own I/O format.
 Users have to change their scripts to conform with its dialect.
 This is a wrapper script to absorb the difference.
-This script is intended to be used by OACIS (https://github.com/crest-cassia/oacis).
+This script is intended to be used by [OACIS](https://github.com/crest-cassia/oacis).
 
 Although only a few types of schedulers are currently supported, you can extend this in order to fit your schedulers.
 
@@ -139,6 +139,24 @@ delete a job
     - if the job finished successfully, return code is zero.
     - if the job is not found, it returns non-zero.
   - output format is not defined.
+
+## Supported Schedulers
+
+List of available schedulers.
+
+- **none**
+  - If you are not using a scheduler, please use this. The command is executed as a usual process.
+- **torque**
+  - [Torque](http://www.adaptivecomputing.com/products/open-source/torque/)
+  - `qsub`, `qstat`, `qdel` commands are used.
+- **fx10**
+  - a scheduler for fx10.
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
+- **k**
+  - a scheduler for the k-computer.
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
+  - Files in the work_dir are staged-in.
+  - Files created in the `work_dir` are staged-out.
 
 ## Extending
 
