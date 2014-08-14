@@ -6,7 +6,7 @@ module Xsub
 #!/bin/bash
 LANG=C
 #PBS -l nodes=<%= mpi_procs.to_i*omp_threads.to_i/ppn.to_i %>:ppn=<%= ppn %>
-#PBS -l walltime=<%= elapsed %>
+#PBS -l walltime=<%= walltime %>
 . <%= job_file %>
 EOS
 
@@ -14,7 +14,7 @@ EOS
       "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
       "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
       "ppn" => { description: "Process per nodes", default: 1, format: '^[1-9]\d*$'},
-      "elapse" => { description: "Limit on elapsed time", default: "1:00:00", format: '^\d+:\d{2}:\d{2}$'}
+      "walltime" => { description: "Limit on elapsed time", default: "1:00:00", format: '^\d+:\d{2}:\d{2}$'}
     }
 
     def validate_parameters(prm)
