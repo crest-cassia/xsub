@@ -20,6 +20,7 @@ module Xsub
       merged = default_parameters.merge( parameters )
       @logger.info "Parameters: #{merged.inspect}"
       verify_no_unknown_parameter(merged)
+      verify_parameter_matches_format(merged)
       validate_parameters(merged)
 
       parent_script = render_template( merged.merge(job_file: File.expand_path(job_script)) )
@@ -65,6 +66,16 @@ module Xsub
       extra = parameters.keys - default_parameters.keys
       unless extra.empty?
         raise "Unknown parameter exist : #{extra.inspect}"
+      end
+    end
+
+    def verify_parameter_matches_format(parameters)
+      parameter_definitions.each do |key,param_def|
+        if param_def.has_key?(:format)
+          unless parameters[key].to_s =~ Regexp.new(param_def[:format])
+            raise "#{key}:#{parameters[key]} does not match #{param_def[:format]}"
+          end
+        end
       end
     end
 

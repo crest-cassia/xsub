@@ -35,14 +35,6 @@ EOS
       unless mpi >= 1 and omp >= 1
         raise "mpi_procs and omp_threads must be larger than or equal to 1"
       end
-      node = prm["node"]
-      unless node =~ /^[\d]+x[\d]+x[\d]$/ or node =~ /^[\d]+x[\d]+$/ or node =~ /^[\d]+$/
-        raise "node must be like 12, 4x3 or 2x3x2"
-      end
-      shape = prm["shape"]
-      unless shape =~ /^[\d]+x[\d]+x[\d]$/ or shape =~ /^[\d]+x[\d]+$/ or shape =~ /^[\d]+$/
-        raise "shape must be like 12, 4x3 or 2x3x2"
-      end
       tmp_node = node.split("x")
       tmp_shape = shape.split("x")
       unless tmp_node.length == tmp_shape.length
