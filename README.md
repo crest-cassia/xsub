@@ -8,7 +8,29 @@ This script is intended to be used by OACIS (https://github.com/crest-cassia/oac
 
 Although only a few types of schedulers are currently supported, you can extend this in order to fit your schedulers.
 
-## Specification
+## Installation
+
+- Install Ruby 1.9 or later.
+  - We recommend using [rbenv](https://github.com/sstephenson/rbenv) to install Ruby.
+  - In some environments such as fx10, it does not work with Ruby 2.1. In such case, please use 2.0 or 1.9.
+
+- Clone this repository
+
+  ```
+  git clone https://github.com/crest-cassia/xsub.git
+  ```
+
+- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bashrc (or ~/.zshrc)
+  - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
+  - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
+  - If you run xsub from OACIS, please set these variables in .bashrc even if your login shell is zsh. This is because OACIS execute xsub on bash.
+
+  ```sh:.bashrc
+  export PATH="$HOME/xsub/bin:$PATH"
+  export XSUB_TYPE="torque"
+  ```
+
+## Usage
 
 Three commands **xsub**, **xstat**, and **xdel** are provided.
 These correspond to qsub, qstat, and qdel of Torque.
@@ -33,25 +55,32 @@ submit a job to a scheduler
 - **output format**:
   - when "-t" option is given, it prints JSON as follows.
     - it must have a "parameters" field.
-    - Each parameter has "description" field and "default" field. "description" field is optional.
+    - Each parameter has "description", "default", and "format" fields.
+      - "description" and "format" fields are optional.
+      - format is given as a regular expression. If the given parameter does not match the format, xsub fails.
+
   ```json
   {
     "parameters": {
       "mpi_procs": {
         "description": "MPI process",
-        "default": 1
+        "default": 1,
+        "format": "^[1-9]\\d*$"
       },
       "omp_threads": {
         "description": "OMP threads",
-        "default": 1
+        "default": 1,
+        "format": "^[1-9]\\d*$"
       },
       "ppn": {
         "description": "Process per node",
-        "default": 1
+        "default": 1,
+        "format": "^[1-9]\\d*$"
       },
       "elapsed": {
         "description": "Limit on elapsed time",
-        "default": "1:00:00"
+        "default": "1:00:00",
+        "format": "^\\d+:\\d{2}:\\d{2}$"
       }
     }
   }
@@ -69,7 +98,7 @@ submit a job to a scheduler
 - **example**
 
 ```sh
-xsub job.sh -d work_dir -l work_dir/log.txt -p '{"mpi_procs":3,"omp_threads":4,"ppn":4,"elapsed":"2:00:00"}'
+xsub job.sh -d work_dir -l log_dir -p '{"mpi_procs":3,"omp_threads":4,"ppn":4,"elapsed":"2:00:00"}'
 ```
 
 ### xstat
@@ -92,7 +121,7 @@ show a status of a job
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
     - "log_paths" fileds has an array of paths to scheduler log files.
-- when job_id is not given, the output format is arbitrary.
+- when job_id is not given, the output format is not defined.
     - it usually prints the output of `qsub` command.
 
 - **example**
@@ -109,24 +138,7 @@ delete a job
   - cancel the specified job
     - if the job finished successfully, return code is zero.
     - if the job is not found, it returns non-zero.
-  - output format is arbitrary.
-
-## Installation
-
-- Clone this repository
-
-  ```
-  git clone https://github.com/crest-cassia/xsub.git
-  ```
-
-- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bashrc (or ~/.zshrc)
-  - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
-  - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
-
-  ```sh:.bashrc
-  export PATH="$HOME/work/xsub/bin:$PATH"
-  export XSUB_TYPE="torque"
-  ```
+  - output format is not defined.
 
 ## Extending
 
