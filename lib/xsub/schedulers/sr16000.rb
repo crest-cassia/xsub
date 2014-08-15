@@ -43,28 +43,42 @@ EOS
 
     def submit_job(script_path)
       FileUtils.mkdir_p(@work_dir)
-      FileUtils.mkdir_p(@log_dir)
 
       cmd = "cd #{File.expand_path(@work_dir)} && llsubmit #{File.expand_path(script_path)}"
       @logger.info "cmd: #{cmd}"
       output = `#{cmd}`
       raise "rc is not zero: #{output}" unless $?.to_i == 0
-      job_id = output.lines.to_a.last
+      # sample output:
+      #   KBGT60003-I Budget function authenticated bu0701. bu0701 is not assigned account number.
+      #   llsubmit: The job "htcf02c01p02.134491" has been submitted.
+      regexp = /^llsubmit: The job "(\w+.\d+)" has been submitted.$/
+      matched_line = output.lines.find {|line| line =~ regexp }
+      if matched_line
+        job_id = $1
+      else
+        @logger.error "unexpected format"
+        raise "unexpected format"
+      end
       @logger.info "job_id: #{job_id}"
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
     def status(job_id)
-      cmd = "llstatus #{job_id}"
+      cmd = "llq #{job_id}"
+      ## sample output
+      # Id                       Owner      Submitted   ST PRI Class        Running On 
+      # ------------------------ ---------- ----------- -- --- ------------ -----------
+      # htcf02c01p02.134491.0    bu0701      8/15 14:37 I  50  c                       
+      #
+      # 1 job step(s) in query, 1 waiting, 0 pending, 0 running, 0 held, 0 preempted
+
       output = `#{cmd}`
       if $?.to_i == 0
-        status = case output.lines.to_a.last.split[3]
-        when /ACC|QUE/
+        status = case output.lines.to_a[2].split[4]
+        when "I"
           :queued
-        when /SIN|RDY|RNA|RUN|RNO|SOT/
+        when "R"
           :running
-        when /EXT|CCL/
-          :finished
         else
           :finished
         end
@@ -75,7 +89,7 @@ EOS
     end
 
     def all_status
-      cmd = "llstatus"
+      cmd = "llq"
       output = `#{cmd}`
       { raw_output: output.lines.map(&:chomp).to_a }
     end
@@ -83,7 +97,7 @@ EOS
     def delete(job_id)
       cmd = "llcancel #{job_id}"
       output = `#{cmd}`
-      output = "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
+      output = "llcancel failed: rc=#{$?.to_i}" unless $?.to_i == 0
       {raw_output: output.lines.map(&:chomp).to_a }
     end
   end
