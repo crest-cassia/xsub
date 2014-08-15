@@ -8,6 +8,7 @@ require "xsub/schedulers/none"
 require "xsub/schedulers/torque"
 require "xsub/schedulers/fx10"
 require "xsub/schedulers/k"
+require "xsub/schedulers/sr16000"
 
 module Xsub
 
@@ -15,7 +16,8 @@ module Xsub
     none: Xsub::SchedulerNone,
     torque: Xsub::SchedulerTorque,
     fx10: Xsub::SchedulerFx10,
-    k: Xsub::SchedulerK
+    k: Xsub::SchedulerK,
+    sr16000: Xsub::SchedulerSR16000
   }
 
   def self.load_scheduler

@@ -1,6 +1,6 @@
 module Xsub
 
-  class SchedulerSR16000_FlatMPI_SMT < Base
+  class SchedulerSR16000 < Base
 
     TEMPLATE = <<EOS
 #!/bin/csh -f
