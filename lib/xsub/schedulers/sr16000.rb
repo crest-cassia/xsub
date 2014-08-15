@@ -3,7 +3,7 @@ module Xsub
   class SchedulerSR16000 < Base
 
     TEMPLATE = <<'EOS'
-#!/bin/csh -f
+#!/bin/bash
 #@class = <%= job_class %>
 #@job_type = parallel
 #@network.MPI=sn_single,,US,,instances=1
@@ -15,11 +15,11 @@ module Xsub
 #@error = $(host).$(jobid).stderr
 #@queue
 
-unlimit
-setenv MEMORY_AFFINITY MCM
-setenv MP_SHARED_MEMORY no
-setenv HF_PRUNST_THREADNUM 1
-setenv XLSMPOPTS "spins=0:yields=0:parthds=1"
+# unlimit
+export MEMORY_AFFINITY=MCM
+export MP_SHARED_MEMORY=no
+export HF_PRUNST_THREADNUM=1
+export XLSMPOPTS="spins=0:yields=0:parthds=1"
 
 . <%= job_file %>
 EOS
