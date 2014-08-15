@@ -2,7 +2,7 @@ module Xsub
 
   class SchedulerSR16000 < Base
 
-    TEMPLATE = <<EOS
+    TEMPLATE = <<'EOS'
 #!/bin/csh -f
 #@class = <%= job_class %>
 #@job_type = parallel
