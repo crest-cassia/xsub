@@ -35,8 +35,8 @@ EOS
       unless mpi >= 1 and omp >= 1
         raise "mpi_procs and omp_threads must be larger than or equal to 1"
       end
-      tmp_node = node.split("x")
-      tmp_shape = shape.split("x")
+      tmp_node = prm['node'].split("x")
+      tmp_shape = prm['shape'].split("x")
       unless tmp_node.length == tmp_shape.length
         raise "node and shape must be a same format like node=>4x3, shape=>1x1"
       end
