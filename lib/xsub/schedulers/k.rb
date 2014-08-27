@@ -3,7 +3,7 @@ module Xsub
   class SchedulerK < Base
 
     TEMPLATE = <<EOS
-#!/bin/bash
+#!/bin/bash -x
 #
 #PJM --rsc-list "node=<%= node %>"
 #PJM --rsc-list "elapse=<%= elapse %>"

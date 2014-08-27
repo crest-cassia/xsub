@@ -3,7 +3,7 @@ module Xsub
   class SchedulerSR16000 < Base
 
     TEMPLATE = <<'EOS'
-#!/bin/bash
+#!/bin/bash -x
 #@class = <%= job_class %>
 #@job_type = parallel
 #@network.MPI=sn_single,,US,,instances=1
