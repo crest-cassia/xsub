@@ -4,9 +4,9 @@ module Xsub
 
     TEMPLATE = <<EOS
 #!/bin/bash -x
-LANG=C
 #PBS -l nodes=<%= mpi_procs.to_i*omp_threads.to_i/ppn.to_i %>:ppn=<%= ppn %>
 #PBS -l walltime=<%= walltime %>
+LANG=C
 . <%= job_file %>
 EOS
 
