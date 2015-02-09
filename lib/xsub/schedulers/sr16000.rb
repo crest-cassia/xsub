@@ -75,8 +75,7 @@ EOS
       output = `#{cmd}`
       if $?.to_i == 0
         status = case output.lines.to_a[2].split[4]
-        when "I"
-        when "NQ"
+        when "I","NQ"
           :queued
         when "R"
           :running
