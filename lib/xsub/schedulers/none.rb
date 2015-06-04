@@ -6,7 +6,10 @@ module Xsub
 . <%= job_file %>
 EOS
 
-    PARAMETERS = {}
+    PARAMETERS = {
+      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
+      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'}
+    }
 
     def submit_job(script_path)
       full_path = File.expand_path(script_path)
