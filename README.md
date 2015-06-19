@@ -20,12 +20,13 @@ Although only a few types of schedulers are currently supported, you can extend 
   git clone https://github.com/crest-cassia/xsub.git
   ```
 
-- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bashrc (or ~/.zshrc)
+- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bash_profile (or ~/.zshenv)
   - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
   - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
-  - If you run xsub from OACIS, please set these variables in .bashrc even if your login shell is zsh. This is because OACIS execute xsub on bash.
+  - If you run xsub from OACIS, please set these variables in .bash_profile even if your login shell is zsh. This is because OACIS execute xsub on bash launched as a login shell.
+    - do not set these environment variables in .bashrc because it is loaded in an interactive shell, but not in a login shell.
 
-  ```sh:.bashrc
+  ```sh:.bash_profile
   export PATH="$HOME/xsub/bin:$PATH"
   export XSUB_TYPE="torque"
   ```
