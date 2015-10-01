@@ -6,7 +6,7 @@ Users have to change their scripts to conform with its dialect.
 This is a wrapper script to absorb the difference.
 This script is intended to be used by [OACIS](https://github.com/crest-cassia/oacis).
 
-Although only a few types of schedulers are currently supported, you can extend this in order to fit your schedulers.
+Although only a few types of schedulers are currently supported, you can send an enhance request to us or you can just extend it by yourself.
 
 ## Installation
 
@@ -20,18 +20,66 @@ Although only a few types of schedulers are currently supported, you can extend 
   git clone https://github.com/crest-cassia/xsub.git
   ```
 
-- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bash_profile (or ~/.zshenv)
+- set `PATH` and `XSUB_TYPE` environment variables in your ~/.bash_profile
   - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
   - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
-  - If you run xsub from OACIS, please set these variables in .bash_profile even if your login shell is zsh. This is because OACIS execute xsub on bash launched as a login shell.
-    - do not set these environment variables in .bashrc because it is loaded in an interactive shell, but not in a login shell.
+  - If you run xsub from OACIS, please set these variables in .bash_profile even if your login shell is zsh. This is because OACIS executes xsub on bash launched as a login shell.
+    - do not set these environment variables in .bashrc because it is loaded only in an interactive shell, not in a login shell.
 
   ```sh:.bash_profile
   export PATH="$HOME/xsub/bin:$PATH"
   export XSUB_TYPE="torque"
   ```
 
-## Usage
+### Supported Schedulers
+
+List of available schedulers.
+
+- **none**
+  - If you are not using a scheduler, please use this. The command is executed as a usual process.
+- **torque**
+  - [Torque](http://www.adaptivecomputing.com/products/open-source/torque/)
+  - `qsub`, `qstat`, `qdel` commands are used.
+- **fx10**
+  - a scheduler for fx10.
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
+- **k**
+  - a scheduler for the k-computer.
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
+  - Files in the work_dir are staged-in.
+  - Files created in the `work_dir` are staged-out.
+
+## Contact
+
+- Send your feedback to us!
+  - `oacis-dev _at_ googlegroups.com` (replace _at_ with @)
+  - We appreciate your questions, feature requests, and bug reports.
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2014,2015 RIKEN, AICS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+## Specification
 
 Three commands **xsub**, **xstat**, and **xdel** are provided.
 These correspond to qsub, qstat, and qdel of Torque.
@@ -141,34 +189,17 @@ delete a job
     - if the job is not found, it returns non-zero.
   - output format is not defined.
 
-## Supported Schedulers
-
-List of available schedulers.
-
-- **none**
-  - If you are not using a scheduler, please use this. The command is executed as a usual process.
-- **torque**
-  - [Torque](http://www.adaptivecomputing.com/products/open-source/torque/)
-  - `qsub`, `qstat`, `qdel` commands are used.
-- **fx10**
-  - a scheduler for fx10.
-  - `pjsub`, `pjstat`, `pjdel` commands are used.
-- **k**
-  - a scheduler for the k-computer.
-  - `pjsub`, `pjstat`, `pjdel` commands are used.
-  - Files in the work_dir are staged-in.
-  - Files created in the `work_dir` are staged-out.
-
 ## Extending
 
-- If your scheduler is not supported, you can extend xsub by yourself.
+- If you are not familiar with Ruby, just send us an email.
+- If you are familiar with Ruby, you can extend xsub by yourself.
   - Fork the repository.
   - Add your file to `lib/xsub/schedulers` and edit `lib/xsub.rb` properly.
     - Because this library is small, you can read the whole source code easily.
     - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
-- If you are not familiar with Ruby, please contact us.
+- We would appreciate it if you send us your enhancement as a pull request.
 
-## Contributing
+### Sending pull request
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
