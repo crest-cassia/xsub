@@ -61,6 +61,7 @@ module Xsub
 
       }.parse!(argv)
 
+      raise "no job script is given" unless argv.size == 1
       @script = argv[0]
     end
 
