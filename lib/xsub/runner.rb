@@ -72,8 +72,17 @@ module Xsub
     end
 
     def verify_parameter_format
-      # verify that there is no unknown parameter
-      # verify that parameter matches format
+      param_def = @scheduler.class::PARAMETERS
+      redundant = @parameters.keys - param_def.keys
+      unless redundant.empty?
+        raise "unknown parameter is given: #{redundant}.inspect"
+      end
+
+      param_def.each do |key,definition|
+        unless @parameters[key].to_s =~ Regexp.new(definition[:format])
+          raise "invalid parameter format: #{key} #{@parameters[key]} #{definition[:format]}"
+        end
+      end
     end
 
     def prepare_parent_script

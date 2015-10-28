@@ -98,5 +98,23 @@ RSpec.describe Xsub::Submitter do
       expect( @submitter.parameters ).to eq expected
     end
   end
+
+  describe "verify parameter format" do
+
+    it "raises an error when unknown parameter is given" do
+      argv = %w(-p {"foo":1} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to raise_error /unknown parameter is given/
+    end
+
+    it "raises an error when value does not conform to format" do
+      argv = %w(-p {"mpi_procs":0} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to raise_error /invalid parameter format/
+    end
+  end
+
 end
 
