@@ -3,10 +3,10 @@ RSpec.describe Xsub::Submitter do
   class Dummy < Xsub::Scheduler
 
     TEMPLATE = <<-EOS
-    mpi_procs:<%= mpi_procs %>
-    omp_threads:<%= omp_threads %>
-    p1:<%= p1 %>
-    . <%= job_file %>
+mpi_procs:<%= mpi_procs %>
+omp_threads:<%= omp_threads %>
+p1:<%= p1 %>
+. <%= job_file %>
     EOS
 
     PARAMETERS = {
@@ -33,19 +33,22 @@ RSpec.describe Xsub::Submitter do
 
   before(:each) do
     @submitter = Xsub::Submitter.new( Dummy.new )
+    @log_dir = "log_test"
+    @work_dir = "work_test"
+    Dir.glob("*_xsub*.sh").each do |f|
+      FileUtils.rm(f)
+    end
+  end
+
+  after(:each) do
+    FileUtils.rm_r(@log_dir) if File.directory?(@log_dir)
+    FileUtils.rm_r(@work_dir) if File.directory?(@work_dir)
+    Dir.glob("*_xsub*.sh").each do |f|
+      FileUtils.rm(f)
+    end
   end
 
   describe "#parse_arguments" do
-
-    before(:each) do
-      @log_dir = "log_test"
-      @work_dir = "work_test"
-    end
-
-    after(:each) do
-      FileUtils.rm_r(@log_dir) if File.directory?(@log_dir)
-      FileUtils.rm_r(@work_dir) if File.directory?(@work_dir)
-    end
 
     it "parses -p PARAM option" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"foo"} job.sh)
@@ -124,6 +127,31 @@ RSpec.describe Xsub::Submitter do
       end
       argv = %w(job.sh)
       @submitter.run(argv)
+    end
+  end
+
+  describe "prepare parent script" do
+
+    it "creates parent script" do
+      argv = %w(job.sh)
+      @submitter.run(argv)
+      expect( File.exist?("job_xsub.sh") ).to be_truthy
+    end
+
+    it "renders template" do
+      argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"abc"} job.sh)
+      @submitter.run(argv)
+      p @submitter.parameters
+
+      rendered = File.read("job_xsub.sh")
+      expected = <<-EOS
+mpi_procs:8
+omp_threads:4
+p1:abc
+. #{File.expand_path("job.sh")}
+    EOS
+
+      expect( rendered ).to eq expected
     end
   end
 end
