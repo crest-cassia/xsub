@@ -148,7 +148,6 @@ p1:<%= p1 %>
     it "renders template" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"abc"} job.sh)
       @submitter.run(argv)
-      p @submitter.parameters
 
       rendered = File.read("job_xsub.sh")
       expected = <<-EOS
