@@ -24,12 +24,15 @@ RSpec.describe Xsub::Submitter do
         format: ''}
     }
 
+    def validate_parameters(parameters)
+    end
+
     def submit_job(script_path)
     end
   end
 
   before(:each) do
-    @submitter = Xsub::Submitter.new( Dummy )
+    @submitter = Xsub::Submitter.new( Dummy.new )
   end
 
   describe "#parse_arguments" do
@@ -46,42 +49,42 @@ RSpec.describe Xsub::Submitter do
 
     it "parses -p PARAM option" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4} job.sh)
-      @submitter.send(:parse_arguments, argv)
+      @submitter.run(argv)
       expected = {"mpi_procs" => 8, "omp_threads" => 4}
       expect( @submitter.parameters ).to eq expected
     end
 
     it "parses -l LOG_DIR option" do
       argv = %w(-l log_test job.sh)
-      @submitter.send(:parse_arguments, argv)
+      @submitter.run(argv)
       expect( @submitter.log_dir ).to eq @log_dir
       expect( File.directory?(@log_dir) ).to be_truthy
     end
 
     it "parses -d WORK_DIR option" do
       argv = %w(-d work_test job.sh)
-      @submitter.send(:parse_arguments, argv)
+      @submitter.run(argv)
       expect( @submitter.work_dir ).to eq @work_dir
       expect( File.directory?(@work_dir) ).to be_truthy
     end
 
     it "parses job_script" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4} -d work_test -l log_test job.sh)
-      @submitter.send(:parse_arguments, argv)
+      @submitter.run(argv)
       expect( @submitter.script ).to eq "job.sh"
     end
 
     it "raises an error when script is not given" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4} -d work_test -l log_test)
       expect {
-        @submitter.send(:parse_arguments, argv)
+        @submitter.run(argv)
       }.to raise_error "no job script is given"
     end
 
     it "raises an error when unknown parameter is given" do
       argv = %w(-a foo job.sh)
       expect {
-        @submitter.send(:parse_arguments, argv)
+        @submitter.run(argv)
       }.to raise_error OptionParser::InvalidOption
     end
   end
