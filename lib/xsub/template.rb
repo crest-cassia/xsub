@@ -3,12 +3,22 @@ require 'erb'
 module Xsub
 
   module Template
-    def self.render( template, variables )
-      b = binding
-      variables.each do |name, value|
-        b.eval("#{name} = #{value.inspect}")
-        # b.local_variable_set(name.to_sym, value)
+
+    class Namespace
+
+      def initialize(hash)
+        hash.each do |key,val|
+          singleton_class.send(:define_method, key) { val }
+        end
       end
+
+      def get_binding
+        binding
+      end
+    end
+
+    def self.render( template, variables )
+      b = Namespace.new(variables).get_binding
       ERB.new(template).result(b)
     end
   end
