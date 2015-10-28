@@ -161,5 +161,16 @@ p1:abc
       expect( rendered ).to eq expected
     end
   end
+
+  describe "Scheduler#submit_job" do
+
+    it "calls Scheduler#submit_job" do
+      expect(@submitter.scheduler).to receive(:submit_job) do |arg|
+        expect(arg).to eq File.expand_path("job_xsub.sh")
+      end
+      argv = %w(job.sh)
+      @submitter.run(argv)
+    end
+  end
 end
 
