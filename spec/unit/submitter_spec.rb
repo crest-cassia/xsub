@@ -48,9 +48,9 @@ RSpec.describe Xsub::Submitter do
     end
 
     it "parses -p PARAM option" do
-      argv = %w(-p {"mpi_procs":8,"omp_threads":4} job.sh)
+      argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"foo"} job.sh)
       @submitter.run(argv)
-      expected = {"mpi_procs" => 8, "omp_threads" => 4}
+      expected = {"mpi_procs"=>8,"omp_threads"=>4,"p1"=>"foo"}
       expect( @submitter.parameters ).to eq expected
     end
 
@@ -69,13 +69,13 @@ RSpec.describe Xsub::Submitter do
     end
 
     it "parses job_script" do
-      argv = %w(-p {"mpi_procs":8,"omp_threads":4} -d work_test -l log_test job.sh)
+      argv = %w(-p {"mpi_procs":8} -d work_test -l log_test job.sh)
       @submitter.run(argv)
       expect( @submitter.script ).to eq "job.sh"
     end
 
     it "raises an error when script is not given" do
-      argv = %w(-p {"mpi_procs":8,"omp_threads":4} -d work_test -l log_test)
+      argv = %w(-p {"mpi_procs":8} -d work_test -l log_test)
       expect {
         @submitter.run(argv)
       }.to raise_error "no job script is given"
@@ -86,6 +86,16 @@ RSpec.describe Xsub::Submitter do
       expect {
         @submitter.run(argv)
       }.to raise_error OptionParser::InvalidOption
+    end
+  end
+
+  describe "merge_default_parameters" do
+
+    it "merges default parameters" do
+      argv = %w(-p {"mpi_procs":8} job.sh)
+      @submitter.run(argv)
+      expected = {"mpi_procs" =>8,"omp_threads" =>1,"p1"=>"abc"}
+      expect( @submitter.parameters ).to eq expected
     end
   end
 end

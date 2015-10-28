@@ -66,6 +66,9 @@ module Xsub
     end
 
     def merge_default_parameters
+      @scheduler.class::PARAMETERS.each do |key,definition|
+        @parameters[key] ||= definition[:default]
+      end
     end
 
     def verify_parameter_format
