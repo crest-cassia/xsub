@@ -9,11 +9,13 @@ module Xsub
 
     LOG_ROTATE_SIZE = 7
 
-    attr_reader :scheduler, :parameters, :logger, :work_dir, :log_dir
+    attr_reader :scheduler, :parameters, :script,
+                :logger, :work_dir, :log_dir
 
     def initialize(scheduler)
       @scheduler = scheduler
       @parameters = {}
+      @script = nil
       @logger = Logger.new(STDERR)
       @work_dir = '.'
       @log_dir = '.'
@@ -58,6 +60,8 @@ module Xsub
         end
 
       }.parse!(argv)
+
+      @script = argv[0]
     end
 
     def merge_default_parameters
