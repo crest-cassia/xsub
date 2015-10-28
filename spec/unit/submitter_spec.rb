@@ -105,16 +105,26 @@ RSpec.describe Xsub::Submitter do
       argv = %w(-p {"foo":1} job.sh)
       expect {
         @submitter.run(argv)
-      }.to raise_error /unknown parameter is given/
+      }.to raise_error(/unknown parameter is given/)
     end
 
     it "raises an error when value does not conform to format" do
       argv = %w(-p {"mpi_procs":0} job.sh)
       expect {
         @submitter.run(argv)
-      }.to raise_error /invalid parameter format/
+      }.to raise_error(/invalid parameter format/)
     end
   end
 
+  describe "Scheduler#validate_parameters" do
+
+    it "calls Scheduler#validate_parameters" do
+      expect(@submitter.scheduler).to receive(:validate_parameters) do |arg|
+        expect(arg).to eq @submitter.parameters
+      end
+      argv = %w(job.sh)
+      @submitter.run(argv)
+    end
+  end
 end
 
