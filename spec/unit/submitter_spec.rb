@@ -138,6 +138,13 @@ p1:<%= p1 %>
       expect( File.exist?("job_xsub.sh") ).to be_truthy
     end
 
+    it "creates parent script with a unique name" do
+      argv = %w(job.sh)
+      FileUtils.touch "job_xsub.sh"
+      @submitter.run(argv)
+      expect( File.exist?("job_xsub1.sh") ).to be_truthy
+    end
+
     it "renders template" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"abc"} job.sh)
       @submitter.run(argv)
