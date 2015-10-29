@@ -68,7 +68,7 @@ RSpec.describe Xsub::Torque do
 
   describe "#status" do
 
-    it "checks status by qstat" do
+    it "returns :queued status by qstat" do
       s = Xsub::Torque.new
       command = "qstat 19352"
       stat = <<EOS
@@ -79,6 +79,41 @@ EOS
       expect(s).to receive(:`).with(command).and_return(stat)
       out = s.status(19352)
       expect( out[:status] ).to eq :queued
+    end
+
+    it "returns :running status by qstat" do
+      s = Xsub::Torque.new
+      command = "qstat 19352"
+      stat = <<EOS
+Job id                    Name             User            Time Use S Queue
+------------------------- ---------------- --------------- -------- - -----
+19352.localhost           job.sh           test_user              0 R batch
+EOS
+      expect(s).to receive(:`).with(command).and_return(stat)
+      out = s.status(19352)
+      expect( out[:status] ).to eq :running
+    end
+
+    it "returns :finished status by qstat" do
+      s = Xsub::Torque.new
+      command = "qstat 19352"
+      stat = <<EOS
+Job id                    Name             User            Time Use S Queue
+------------------------- ---------------- --------------- -------- - -----
+19352.localhost           job.sh           test_user              0 C batch
+EOS
+      expect(s).to receive(:`).with(command).and_return(stat)
+      out = s.status(19352)
+      expect( out[:status] ).to eq :finished
+    end
+
+    it "returns :finished status by qstat when job_id is not found" do
+      s = Xsub::Torque.new
+      command = "qstat 19352"
+      expect(s).to receive(:`).with(command).and_return('')
+      allow($?).to receive(:to_i).and_return(153)
+      out = s.status(19352)
+      expect( out[:status] ).to eq :finished
     end
   end
 end
