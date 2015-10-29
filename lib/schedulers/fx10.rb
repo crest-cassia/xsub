@@ -93,14 +93,14 @@ EOS
     def all_status
       cmd = "pjstat"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "pjdel #{job_id}"
       output = `#{cmd}`
-      output = "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
+      output
     end
   end
 end

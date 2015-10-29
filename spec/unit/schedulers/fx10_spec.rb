@@ -82,49 +82,63 @@ RSpec.describe Xsub::Fx10 do
   describe "#status" do
 
     it "returns :queued status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
+      s = Xsub::Fx10.new
+      command = "pjstat 112111"
       stat = <<EOS
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 Q batch
+        ACCEPT QUEUED  STGIN  READY RUNING RUNOUT STGOUT   HOLD  ERROR   TOTAL
+       0      0      0      0      1      0      0      0      0       1
+s      0      0      0      0      1      0      0      0      0       1
+
+JOB_ID     JOB_NAME   MD ST  USER     START_DATE      ELAPSE_LIM NODE_REQUIRE
+112111     test.sh    NM QUE test     10/29 18:42:44  0024:00:00 1
 EOS
       expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
+      out = s.status("112111")
       expect( out[:status] ).to eq :queued
     end
 
     it "returns :running status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
+      s = Xsub::Fx10.new
+      command = "pjstat 112111"
       stat = <<EOS
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 R batch
+  ACCEPT QUEUED  STGIN  READY RUNING RUNOUT STGOUT   HOLD  ERROR   TOTAL
+       0      0      0      0      1      0      0      0      0       1
+s      0      0      0      0      1      0      0      0      0       1
+
+JOB_ID     JOB_NAME   MD ST  USER     START_DATE      ELAPSE_LIM NODE_REQUIRE
+112111     test.sh    NM RUN test     10/29 18:42:44  0024:00:00 1
 EOS
       expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
+      out = s.status("112111")
       expect( out[:status] ).to eq :running
     end
 
-    it "returns :finished status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
+    it "returns :finished status by pjstat" do
+      s = Xsub::Fx10.new
+      command = "pjstat 112111"
       stat = <<EOS
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 C batch
+  ACCEPT QUEUED  STGIN  READY RUNING RUNOUT STGOUT   HOLD  ERROR   TOTAL
+       0      0      0      0      1      0      0      0      0       1
+s      0      0      0      0      1      0      0      0      0       1
+
+JOB_ID     JOB_NAME   MD ST  USER     START_DATE      ELAPSE_LIM NODE_REQUIRE
+112111     test.sh    NM EXT test     10/29 18:42:44  0024:00:00 1
 EOS
       expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
+      out = s.status("112111")
       expect( out[:status] ).to eq :finished
     end
 
     it "returns :finished status by qstat when job_id is not found" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
-      expect(s).to receive(:`).with(command) { `exit 153` }
-      out = s.status(19352)
+      s = Xsub::Fx10.new
+      command = "pjstat 112111"
+      stat = <<EOS
+  ACCEPT QUEUED  STGIN  READY RUNING RUNOUT STGOUT   HOLD  ERROR   TOTAL
+       0      0      0      0      0      0      0      0      0       0
+s      0      0      0      0      0      0      0      0      0       0
+EOS
+      expect(s).to receive(:`).with(command).and_return(stat)
+      out = s.status("112111")
       expect( out[:status] ).to eq :finished
     end
   end
@@ -132,8 +146,8 @@ EOS
   describe "#all_status" do
 
     it "returns status in string" do
-      s = Xsub::Torque.new
-      expect(s).to receive(:`).with("qstat && pbsnodes -a").and_return("abc")
+      s = Xsub::Fx10.new
+      expect(s).to receive(:`).with("pjstat").and_return("abc")
       expect( s.all_status ).to eq "abc"
     end
   end
@@ -141,9 +155,9 @@ EOS
   describe "#delete" do
 
     it "cancels job by qdel command" do
-      s = Xsub::Torque.new
-      expect(s).to receive(:`).with("qdel 12345")
-      s.delete("12345")
+      s = Xsub::Fx10.new
+      expect(s).to receive(:`).with("pjdel 112113")
+      s.delete("112113")
     end
   end
 end
