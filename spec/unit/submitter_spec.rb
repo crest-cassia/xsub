@@ -13,17 +13,17 @@ p1:<%= p1 %>
 
     PARAMETERS = {
       "mpi_procs" => {
-        description: "MPI process",
-        default: 1,
-        format: '^[1-9]\d*$'},
+        "description" => "MPI process",
+        "default" => 1,
+        "format" => '^[1-9]\d*$'},
       "omp_threads" => {
-        description: "OMP threads",
-        default: 1,
-        format: '^[1-9]\d*$'},
+        "description" => "OMP threads",
+        "default" => 1,
+        "format" => '^[1-9]\d*$'},
       "p1" => {
-        description: "param1",
-        default: "abc",
-        format: ''}
+        "description" => "param1",
+        "default" => "abc",
+        "format" => ''}
     }
 
     def validate_parameters(parameters)
@@ -54,6 +54,19 @@ p1:<%= p1 %>
   end
 
   describe "#parse_arguments" do
+
+    it "prints definition and exit when -t option is given" do
+      #expect(Kernel).to receive(:exit)
+      argv = %w(-t)
+      expect {
+        @submitter.run(argv)
+      }.to raise_error SystemExit
+      printed = $stdout.string
+      obj = JSON.load(printed)
+      s = @submitter.scheduler
+      expect( obj["parameters"] ).to eq s.class::PARAMETERS
+      expect( obj["template"].join("\n") ).to eq s.class::TEMPLATE.chomp
+    end
 
     it "parses -p PARAM option" do
       argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"foo"} job.sh)

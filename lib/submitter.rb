@@ -34,8 +34,9 @@ module Xsub
     def parse_arguments(argv)
       OptionParser.new { |parser|
         parser.on('-t', '--show-template', 'show template') do |t|
-          raise "scheduler type is not given" unless scheduler
-          h = {parameters: scheduler.parameter_definitions, template: scheduler.template.lines.map(&:chomp) }
+          h = { parameters: @scheduler.class::PARAMETERS,
+                template: @scheduler.class::TEMPLATE.lines.map(&:chomp)
+              }
           $stdout.print JSON.pretty_generate(h)
           exit
         end
