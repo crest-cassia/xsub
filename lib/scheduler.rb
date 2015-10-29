@@ -9,9 +9,7 @@ module Xsub
     def self.get_scheduler(scheduler_name = nil)
       scheduler_name ||= ENV['XSUB_TYPE']
       unless scheduler_name
-        $stderr.puts "Set environment variable 'XSUB_TYPE'"
-        $stderr.puts "  You can set #{descendants.inspect}"
-        raise " XSUB_TYPE is not set"
+        raise " XSUB_TYPE is not set: select from #{descendants.inspect}"
       end
       scheduler = descendants.find do |klass|
         klass.name.split('::').last.downcase == scheduler_name.downcase
