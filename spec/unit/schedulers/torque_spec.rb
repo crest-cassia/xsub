@@ -114,7 +114,7 @@ EOS
     it "returns :finished status by qstat when job_id is not found" do
       s = Xsub::Torque.new
       command = "qstat 19352"
-      expect(s).to receive(:`).with(command) { `exit 153` }
+      expect(s).to receive(:`).with(command) { `exit 153 > /dev/null` }
       out = s.status(19352)
       expect( out[:status] ).to eq :finished
     end
