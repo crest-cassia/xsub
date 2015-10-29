@@ -2,6 +2,10 @@ require 'stringio'
 
 RSpec.describe Xsub::Torque do
 
+  before(:each) do
+    `exit 0`  # set default exit code
+  end
+
   it "is a descendant of Scheduler" do
     expect( Xsub::Scheduler.descendants.include?(described_class) ).to be_truthy
   end
