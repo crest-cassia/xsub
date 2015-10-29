@@ -3,7 +3,7 @@ require 'stringio'
 RSpec.describe Xsub::Torque do
 
   before(:each) do
-    `exit 0`  # set default exit code
+    `exit 0 > /dev/null`  # set default exit code
   end
 
   it "is a descendant of Scheduler" do
