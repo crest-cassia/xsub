@@ -40,7 +40,7 @@ EOS
       output = `#{cmd}`
       unless $?.to_i == 0
         log.puts "rc is not zero: #{output}"
-        raise "rc is not zero: #{output}" 
+        raise "rc is not zero: #{output}"
       end
       job_id = output.lines.to_a.last.to_i
       log.puts "job_id: #{job_id}"

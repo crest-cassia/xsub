@@ -29,7 +29,7 @@ p1:<%= p1 %>
     def validate_parameters(parameters)
     end
 
-    def submit_job(script_path)
+    def submit_job(script_path, work_dir, log_dir)
       {"job_id" => "1234"}
     end
   end
@@ -184,7 +184,7 @@ p1:abc
 
     it "calls Scheduler#submit_job" do
       expect(@submitter.scheduler).to receive(:submit_job)
-                                        .with(File.expand_path("job_xsub.sh"))
+                                        .with(File.expand_path("job_xsub.sh"), '.', '.')
                                         .and_call_original
       argv = %w(job.sh)
       @submitter.run(argv)
