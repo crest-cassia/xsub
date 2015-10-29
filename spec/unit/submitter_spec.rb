@@ -8,7 +8,7 @@ RSpec.describe Xsub::Submitter do
 mpi_procs:<%= mpi_procs %>
 omp_threads:<%= omp_threads %>
 p1:<%= p1 %>
-. <%= job_file %>
+. <%= _job_file %>
     EOS
 
     PARAMETERS = {

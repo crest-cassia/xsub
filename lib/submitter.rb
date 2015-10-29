@@ -86,7 +86,9 @@ module Xsub
     end
 
     def prepare_parent_script
-      merged = @parameters.merge(job_file: File.expand_path(@script) )
+      merged = @parameters.merge(
+        _job_file: File.expand_path(@script), _work_dir: File.expand_path(@work_dir)
+      )
       rendered = Template.render(@scheduler.class::TEMPLATE, merged)
       ps_path = parent_script_path( @script )
       File.open(ps_path, 'w') do |f|
