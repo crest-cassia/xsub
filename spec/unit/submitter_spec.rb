@@ -1,3 +1,5 @@
+require 'stringio'
+
 RSpec.describe Xsub::Submitter do
 
   class Dummy < Xsub::Scheduler
@@ -28,6 +30,7 @@ p1:<%= p1 %>
     end
 
     def submit_job(script_path)
+      {"job_id" => "1234"}
     end
   end
 
@@ -38,6 +41,7 @@ p1:<%= p1 %>
     Dir.glob("*_xsub*.sh").each do |f|
       FileUtils.rm(f)
     end
+    $stdout = StringIO.new  # supress stdout
   end
 
   after(:each) do
@@ -46,6 +50,7 @@ p1:<%= p1 %>
     Dir.glob("*_xsub*.sh").each do |f|
       FileUtils.rm(f)
     end
+    $stdout = STDOUT
   end
 
   describe "#parse_arguments" do
@@ -124,6 +129,7 @@ p1:<%= p1 %>
     it "calls Scheduler#validate_parameters" do
       expect(@submitter.scheduler).to receive(:validate_parameters) do |arg|
         expect(arg).to eq @submitter.parameters
+        {"job_id" => "1234"}
       end
       argv = %w(job.sh)
       @submitter.run(argv)
@@ -164,9 +170,9 @@ p1:abc
   describe "Scheduler#submit_job" do
 
     it "calls Scheduler#submit_job" do
-      expect(@submitter.scheduler).to receive(:submit_job) do |arg|
-        expect(arg).to eq File.expand_path("job_xsub.sh")
-      end
+      expect(@submitter.scheduler).to receive(:submit_job)
+                                        .with(File.expand_path("job_xsub.sh"))
+                                        .and_call_original
       argv = %w(job.sh)
       @submitter.run(argv)
     end

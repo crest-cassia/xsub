@@ -28,7 +28,7 @@ module Xsub
       @scheduler.validate_parameters(@parameters)
       parent_script_path = prepare_parent_script
       output = @scheduler.submit_job( parent_script_path )
-      #$stdout.print JSON.pretty_generate(output)
+      $stdout.print JSON.pretty_generate(output)
     end
 
     def parse_arguments(argv)
