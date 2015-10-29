@@ -17,6 +17,12 @@ RSpec.describe Xsub::Scheduler do
         Xsub::Scheduler.get_scheduler("dummy3")
       }.to raise_error(/scheduler is not found/)
     end
+
+    it "raises an error when XSUB_TYPE is not set" do
+      expect {
+        Xsub::Scheduler.get_scheduler
+      }.to raise_error(/XSUB_TYPE is not set/)
+    end
   end
 end
 
