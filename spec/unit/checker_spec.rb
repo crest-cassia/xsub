@@ -1,3 +1,5 @@
+require 'stringio'
+
 RSpec.describe Xsub::Checker do
 
   class Dummy < Xsub::Scheduler
@@ -13,18 +15,18 @@ RSpec.describe Xsub::Checker do
 
   before(:each) do
     @checker = Xsub::Checker.new( Dummy.new )
+    $stdout = StringIO.new  # supress stdout
   end
 
   after(:each) do
+    $stdout = STDOUT
   end
 
   context "when job_id is given" do
 
     it "calls Scheduler#status" do
       argv = %w(1234)
-      expect(@checker.scheduler).to receive(:status) {|arg|
-        expect(arg).to eq "1234"
-      }.and_call_original
+      expect(@checker.scheduler).to receive(:status).with("1234").and_call_original
       @checker.run(argv)
     end
   end
