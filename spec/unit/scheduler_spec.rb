@@ -15,7 +15,7 @@ RSpec.describe Xsub::Scheduler do
     it "raises an error when matching scheduler is not found" do
       expect {
         Xsub::Scheduler.get_scheduler("dummy3")
-      }.to raise_error /scheduler is not found/
+      }.to raise_error(/scheduler is not found/)
     end
   end
 end
