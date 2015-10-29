@@ -16,8 +16,11 @@ module Xsub
 
       raise "job_id is not given" unless argv.size == 1
       job_id = argv[0]
-      if job_id
-        output = scheduler.delete(job_id)
+      stat = @scheduler.status(job_id)
+      if stat == :finished
+        $stderr.puts "job is already finished: #{job_id}"
+      else
+        output = @scheduler.delete(job_id)
         $stdout.print output
       end
     end

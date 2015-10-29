@@ -71,14 +71,14 @@ EOS
     def all_status
       cmd = "qstat && pbsnodes -a"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "qdel #{job_id}"
       output = `#{cmd}`
-      output = "qdel failed" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "failed to delete job: #{job_id}" unless $?.to_i == 0
+      output
     end
   end
 end
