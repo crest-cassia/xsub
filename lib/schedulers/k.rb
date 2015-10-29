@@ -10,15 +10,15 @@ module Xsub
 #PJM --mpi "shape=<%= shape %>"
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --stg-transfiles all
-#PJM --stgin "<%= job_file %> <%= File.basename(job_file) %>"
-#PJM --stgin-dir "<%= File.expand_path(@work_dir) %> ./<%= File.basename(@work_dir) %>"
-#PJM --stgout "./* <%= File.expand_path(File.join(@work_dir,'..')) %>/"
-#PJM --stgout "./<%= File.basename(@work_dir) %>/* <%= File.expand_path(@work_dir) %>/"
+#PJM --stgin "<%= _job_file %> <%= File.basename(_job_file) %>"
+#PJM --stgin-dir "<%= File.expand_path(_work_dir) %> ./<%= File.basename(_work_dir) %>"
+#PJM --stgout "./* <%= File.expand_path(File.join(_work_dir,'..')) %>/"
+#PJM --stgout "./<%= File.basename(_work_dir) %>/* <%= File.expand_path(_work_dir) %>/"
 #PJM -s
-cd ./<%= File.basename(@work_dir) %>
+cd ./<%= File.basename(_work_dir) %>
 LANG=C
 . /work/system/Env_base
-. <%= File.join('..', File.basename(job_file)) %>
+. <%= File.join('..', File.basename(_job_file)) %>
 EOS
 
     PARAMETERS = {
@@ -51,17 +51,20 @@ EOS
       end
     end
 
-    def submit_job(script_path)
-      FileUtils.mkdir_p(@work_dir)
-      FileUtils.mkdir_p(@log_dir)
-      stdout_path = File.join( File.expand_path(@log_dir), '%j.o.txt')
-      stderr_path = File.join( File.expand_path(@log_dir), '%j.e.txt')
-      job_stat_path = File.join( File.expand_path(@log_dir), '%j.i.txt')
+    def submit_job(script_path, work_dir, log_dir)
+      stdout_path = File.join( File.expand_path(log_dir), '%j.o.txt')
+      stderr_path = File.join( File.expand_path(log_dir), '%j.e.txt')
+      job_stat_path = File.join( File.expand_path(log_dir), '%j.i.txt')
 
-      cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path} < /dev/null"
-      @logger.info "cmd: #{cmd}"
+      log = File.open( File.join(log_dir,'xsub.log'), 'w')
+
+      cmd = "cd #{File.expand_path(work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path} < /dev/null"
+      log.puts "cmd: #{cmd}"
       output = `#{cmd}`
-      raise "rc is not zero: #{output}" unless $?.to_i == 0
+      unless $?.to_i == 0
+        log.puts "rc is not zero: #{output}"
+        raise "rc is not zero: #{output}"
+      end
 
       #success: out = STDOUT:[INFO] PJM 0000 pjsub Job 2275991 submitted.
       #         rc  = 0
@@ -70,12 +73,15 @@ EOS
       #         rc  = 0
       if output =~ /submitted/
         job_id = output.split(" ")[5]
+        log.puts "job_id: #{job_id}"
       else
-        output =~ /\(J(\d|[a-f])+\.sh\.s(\d+)\)/  #=> matches (J5333b14881e31ebcd2000001.sh.s2366652)
-        raise "not supported format" unless $2
-        job_id = $2
+        log.puts output
+        if output =~ /\(J.+\.sh\.s(\d+)\)/  #=> matches (J5333b14881e31ebcd2000001.sh.s2366652)
+          raise "staging option error"
+        else
+          raise "unknown format"
+        end
       end
-      @logger.info "job_id: #{job_id}"
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
@@ -102,14 +108,14 @@ EOS
     def all_status
       cmd = "pjstat"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "pjdel #{job_id}"
       output = `#{cmd}`
-      output = "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
+      output
     end
   end
 end
