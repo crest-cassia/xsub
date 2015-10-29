@@ -1,6 +1,6 @@
 module Xsub
 
-  class SchedulerNone < Base
+  class None < Scheduler
 
     TEMPLATE = <<EOS
 . <%= job_file %>

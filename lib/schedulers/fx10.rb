@@ -1,6 +1,6 @@
 module Xsub
 
-  class SchedulerFx10 < Base
+  class Fx10 < Scheduler
 
     TEMPLATE = <<EOS
 #!/bin/bash -x

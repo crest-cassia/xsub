@@ -1,6 +1,6 @@
 module Xsub
 
-  class SchedulerTorque < Base
+  class Torque < Scheduler
 
     TEMPLATE = <<EOS
 #!/bin/bash -x

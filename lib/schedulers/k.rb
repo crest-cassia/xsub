@@ -1,6 +1,6 @@
 module Xsub
 
-  class SchedulerK < Base
+  class K < Scheduler
 
     TEMPLATE = <<EOS
 #!/bin/bash -x
