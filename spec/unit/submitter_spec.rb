@@ -8,6 +8,7 @@ RSpec.describe Xsub::Submitter do
 mpi_procs:<%= mpi_procs %>
 omp_threads:<%= omp_threads %>
 p1:<%= p1 %>
+work_dir:<%= _work_dir %>
 . <%= _job_file %>
     EOS
 
@@ -165,14 +166,15 @@ p1:<%= p1 %>
     end
 
     it "renders template" do
-      argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"abc"} job.sh)
+      argv = %w(-p {"mpi_procs":8,"omp_threads":4,"p1":"abc"} -d work_test job.sh)
       @submitter.run(argv)
 
-      rendered = File.read("job_xsub.sh")
+      rendered = File.read("work_test/job_xsub.sh")
       expected = <<-EOS
 mpi_procs:8
 omp_threads:4
 p1:abc
+work_dir:#{Dir.pwd}/work_test
 . #{File.expand_path("job.sh")}
     EOS
 
