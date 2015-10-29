@@ -116,5 +116,23 @@ EOS
       expect( out[:status] ).to eq :finished
     end
   end
+
+  describe "#all_status" do
+
+    it "returns status in string" do
+      s = Xsub::Torque.new
+      expect(s).to receive(:`).with("qstat && pbsnodes -a").and_return("abc")
+      expect( s.all_status ).to eq "abc"
+    end
+  end
+
+  describe "#delete" do
+
+    it "cancels job by qdel command" do
+      s = Xsub::Torque.new
+      expect(s).to receive(:`).with("qdel 12345")
+      s.delete("12345")
+    end
+  end
 end
 
