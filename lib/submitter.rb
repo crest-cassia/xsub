@@ -16,7 +16,6 @@ module Xsub
       @scheduler = scheduler
       @parameters = {}
       @script = nil
-      @logger = Logger.new(STDERR)
       @work_dir = '.'
       @log_dir = '.'
     end
@@ -27,7 +26,7 @@ module Xsub
       verify_parameter_format
       @scheduler.validate_parameters(@parameters)
       parent_script_path = prepare_parent_script
-      output = @scheduler.submit_job( parent_script_path )
+      output = @scheduler.submit_job( parent_script_path, @work_dir, @log_dir )
       $stdout.print JSON.pretty_generate(output)
     end
 
@@ -50,7 +49,6 @@ module Xsub
             @log_dir = log.sub(/^=/,'')
             FileUtils.mkdir_p(@log_dir)
             log_file = File.join(@log_dir, 'xsub.log')
-            @logger = Logger.new(log_file , LOG_ROTATE_SIZE)
           end
         end
 

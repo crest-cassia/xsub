@@ -1,3 +1,6 @@
+require 'date'
+require 'json'
+
 module Xsub
 
   class Torque < Scheduler
@@ -29,14 +32,19 @@ EOS
       end
     end
 
-    def submit_job(script_path)
-      FileUtils.mkdir_p(@work_dir)
-      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(@work_dir)} -o #{File.expand_path(@log_dir)} -e #{File.expand_path(@log_dir)}"
-      @logger.info "cmd: #{cmd}"
+    def submit_job(script_path, work_dir, log_dir)
+      log = File.open( File.join(log_dir,"xsub.log"), 'w')
+      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(work_dir)} -o #{File.expand_path(log_dir)} -e #{File.expand_path(log_dir)}"
+      log.puts "cmd: #{cmd}"
+      log.puts "time: #{DateTime.now}"
       output = `#{cmd}`
-      raise "rc is not zero: #{output}" unless $?.to_i == 0
+      unless $?.to_i == 0
+        log.puts "rc is not zero: #{output}"
+        raise "rc is not zero: #{output}" 
+      end
       job_id = output.lines.to_a.last.to_i
-      @logger.info "job_id: #{job_id}"
+      log.puts "job_id: #{job_id}"
+      log.flush && log.close
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
