@@ -5,11 +5,11 @@ RSpec.describe Xsub::Checker do
   class Dummy < Xsub::Scheduler
 
     def status(job_id)
-      {"status" => "running"}
+      return {"status" => "running"}
     end
 
     def all_status
-      {"raw_output" => "foo"}
+      return {"raw_output" => "foo"}
     end
   end
 
