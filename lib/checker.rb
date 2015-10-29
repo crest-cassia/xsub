@@ -21,7 +21,7 @@ module Xsub
       else
         output = @scheduler.all_status
       end
-      $stdout.print JSON.pretty_generate(output)
+      $stdout.print output
     end
   end
 end

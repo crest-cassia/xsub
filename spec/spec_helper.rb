@@ -98,3 +98,47 @@ end
 
 Dir[File.join( File.dirname(__FILE__), "../lib/**/*.rb" )].each {|f| require f}
 
+class Dummy < Xsub::Scheduler
+
+  TEMPLATE = <<-EOS
+mpi_procs:<%= mpi_procs %>
+omp_threads:<%= omp_threads %>
+p1:<%= p1 %>
+work_dir:<%= _work_dir %>
+. <%= _job_file %>
+  EOS
+
+  PARAMETERS = {
+    "mpi_procs" => {
+      description: "MPI process",
+      default: 1,
+      format: '^[1-9]\d*$'},
+    "omp_threads" => {
+      description: "OMP threads",
+      default: 1,
+      format: '^[1-9]\d*$'},
+    "p1" => {
+      description: "param1",
+      default: "abc",
+      format: ''}
+  }
+
+  def validate_parameters(parameters)
+  end
+
+  def submit_job(script_path, work_dir, log_dir)
+    {"job_id" => "1234"}
+  end
+
+  def status(job_id)
+    return {status: :running}
+  end
+
+  def all_status
+    return "foo\nbar"
+  end
+
+  def delete(job_id)
+  end
+end
+

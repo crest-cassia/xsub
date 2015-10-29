@@ -2,16 +2,6 @@ require 'stringio'
 
 RSpec.describe Xsub::Deleter do
 
-  class Dummy < Xsub::Scheduler
-
-    def status(job_id)
-      return {status: :running}
-    end
-
-    def delete(job_id)
-    end
-  end
-
   before(:each) do
     @deleter = Xsub::Deleter.new( Dummy.new )
     $stdout = StringIO.new  # supress stdout

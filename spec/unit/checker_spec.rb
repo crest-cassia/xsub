@@ -2,17 +2,6 @@ require 'stringio'
 
 RSpec.describe Xsub::Checker do
 
-  class Dummy < Xsub::Scheduler
-
-    def status(job_id)
-      return {"status" => "running"}
-    end
-
-    def all_status
-      return {"raw_output" => "foo"}
-    end
-  end
-
   before(:each) do
     @checker = Xsub::Checker.new( Dummy.new )
     $stdout = StringIO.new  # supress stdout
