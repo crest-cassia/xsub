@@ -29,8 +29,7 @@ RSpec.describe Xsub::Submitter do
       expect {
         @submitter.run(argv)
       }.to raise_error SystemExit
-      printed = $stdout.string
-      obj = JSON.load(printed)
+      obj = JSON.load($stdout.string)
       s = @submitter.scheduler
       expect( obj["parameters"] ).to eq JSON.load( JSON.dump(s.class::PARAMETERS) )
       expect( obj["template"].join("\n") ).to eq s.class::TEMPLATE.chomp
