@@ -29,8 +29,8 @@ module Xsub
       File.open( File.join(@log_dir, 'xsub.log'), 'w') { |log|
         output = @scheduler.submit_job( parent_script_path, @work_dir, @log_dir, log )
         log.flush
+        $stdout.print JSON.pretty_generate(output)
       }
-      $stdout.print JSON.pretty_generate(output)
     end
 
     def parse_arguments(argv)

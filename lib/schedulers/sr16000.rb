@@ -25,9 +25,9 @@ export XLSMPOPTS="spins=0:yields=0:parthds=1"
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
+      "mpi_procs" => { description: "MPI process", default: 64, format: '^[1-9]\d*$'},
       "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
-      "job_class" => { description: "Job class", default: "c"},
+      "job_class" => { description: "Job class", default: "c", format: ''},
     }
 
     def validate_parameters(prm)
@@ -41,11 +41,10 @@ EOS
       end
     end
 
-    def submit_job(script_path)
-      FileUtils.mkdir_p(@work_dir)
+    def submit_job(script_path, work_dir, log_dir, log)
 
-      cmd = "cd #{File.expand_path(@work_dir)} && llsubmit #{File.expand_path(script_path)}"
-      @logger.info "cmd: #{cmd}"
+      cmd = "cd #{File.expand_path(work_dir)} && llsubmit #{File.expand_path(script_path)}"
+      log.puts "cmd: #{cmd}"
       output = `#{cmd}`
       raise "rc is not zero: #{output}" unless $?.to_i == 0
       # sample output:
@@ -56,10 +55,10 @@ EOS
       if matched_line
         job_id = $1
       else
-        @logger.error "unexpected format"
+        log.puts "unexpected format"
         raise "unexpected format"
       end
-      @logger.info "job_id: #{job_id}"
+      log.puts "job_id: #{job_id}"
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
@@ -91,14 +90,14 @@ EOS
     def all_status
       cmd = "llq"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "llcancel #{job_id}"
       output = `#{cmd}`
-      output = "llcancel failed: rc=#{$?.to_i}" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "llcancel failed: rc=#{$?.to_i}" unless $?.to_i == 0
+      output
     end
   end
 end
