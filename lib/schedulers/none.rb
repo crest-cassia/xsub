@@ -11,18 +11,21 @@ EOS
       "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'}
     }
 
-    def submit_job(script_path, work_dir, log_dir)
+    def validate_parameters(params)
+    end
+
+    def submit_job(script_path, work_dir, log_dir, log)
       full_path = File.expand_path(script_path)
       cmd = "nohup bash #{full_path} > /dev/null 2>&1 < /dev/null & echo $!"
-      @logger.info "#{cmd} is invoked"
+      log.puts "#{cmd} is invoked"
       output = ""
       FileUtils.mkdir_p(work_dir)
       Dir.chdir(work_dir) {
         output = `#{cmd}`
         raise "rc is not zero: #{cmd}" unless $?.to_i == 0
       }
-      psid = output.lines.to_a.last.to_i
-      @logger.info "process id: #{psid}"
+      psid = output.lines.to_a.last.to_i.to_s
+      log.puts "process id: #{psid}"
       {job_id: psid, raw_output: output.lines.map(&:chomp).to_a}
     end
 
@@ -40,7 +43,7 @@ EOS
     end
 
     def delete(job_id)
-      pgid = `ps -p #{job_id} -o "pgid"`.lines.to_a.last.to_i
+      pgid = `ps -p #{job_id} -o "pgid"`.lines.to_a.last.to_i.to_s
       if $?.to_i == 0
         cmd = "kill -TERM -#{pgid}"
         system(cmd)

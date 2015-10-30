@@ -145,7 +145,11 @@ RSpec.shared_examples "Scheduler#delete" do |expected_cmd|
 
     it "cancels job by #{expected_cmd}" do
       s = described_class.new
-      expect(s).to receive(:`).with("#{expected_cmd} 1234")
+      expect(s).to receive(:`) do |arg|
+        arg =~ Regexp.new(expected_cmd)
+        `exit 0 > /dev/null`
+        ""
+      end
       s.delete("1234")
     end
   end
