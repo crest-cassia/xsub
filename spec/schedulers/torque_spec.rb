@@ -1,142 +1,90 @@
-require 'stringio'
+require_relative '../support/shared_examples_for_scheduler'
 
 RSpec.describe Xsub::Torque do
 
-  before(:each) do
-    `exit 0 > /dev/null`  # set default exit code
-  end
+  it_behaves_like "Scheduler::CONSTANTS"
 
-  it "is a descendant of Scheduler" do
-    expect( Xsub::Scheduler.descendants.include?(described_class) ).to be_truthy
-  end
 
-  it "has a string TEMPLATE" do
-    expect( described_class::TEMPLATE ).to be_a(String)
-  end
+  valid_params = [
+    {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 8}
+  ]
+  invalid_params = [
+    [
+      {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 6},
+      /must be a multiple of ppn/
+    ]
+  ]
 
-  it "has a valid format of PARAMETERS" do
-    params = described_class::PARAMETERS
-    params.each_pair do |key,val|
-      expect( key ).to match(/^[a-z][a-zA-Z_\d]*$/)
-      expect( val.keys ).to match_array [:description, :default, :format]
-      expect( val[:format] ).to be_a(String)
-    end
-  end
+  it_behaves_like "Scheduler#validate_parameters", valid_params, invalid_params
 
-  describe "#validate_parameters" do
+  submit_test_ok_cases = [
+    {
+      command: "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test",
+      out: "19352.localhost",
+      rc: 0,
+      job_id: "19352"
+    }
+  ]
+  submit_test_ng_cases = [
+    {
+      command: nil,
+      out: nil,
+      rc: 1,
+      error: /rc is not zero/
+    }
+  ]
 
-    it "does not raise an error when valid parameters are given" do
-      s = Xsub::Torque.new
-      params = {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 8}
-      expect {
-        s.validate_parameters(params)
-      }.to_not raise_error
-    end
+  it_behaves_like "Scheduler#submit_job", submit_test_ok_cases, submit_test_ng_cases
 
-    it "raises an error when (mpi_procs*omp_threads) is not a multiple of ppn" do
-      s = Xsub::Torque.new
-      params = {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 6}
-      expect {
-        s.validate_parameters(params)
-      }.to raise_error(/must be a multiple of ppn/)
-    end
-  end
 
-  describe "#submit_job" do
-
-    before(:each) do
-      FileUtils.mkdir_p("work_test")
-      FileUtils.mkdir_p("log_test")
-    end
-
-    after(:each) do
-      FileUtils.rm_rf("work_test")
-      FileUtils.rm_rf("log_test")
-    end
-
-    it "submits job by qsub" do
-      s = Xsub::Torque.new
-      command = "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test"
-      expect(s).to receive(:`).with(command).and_return("19352.localhost")
-      out = s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
-      expect( out[:job_id] ).to eq 19352
-    end
-
-    it "prints log in the log directory" do
-      s = Xsub::Torque.new
-      allow(s).to receive(:`).and_return("19352.localhost")
-      log = StringIO.new
-      s.submit_job("job.sh", "work_test", "log_test", log)
-      expect( log.string ).to_not be_empty
-    end
-  end
-
-  describe "#status" do
-
-    it "returns :queued status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
-      stat = <<EOS
+    status_test_cases = [
+    {
+      job_id: "19352",
+      command: "qstat 19352",
+      out: <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 Q batch
 EOS
-      expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
-      expect( out[:status] ).to eq :queued
-    end
-
-    it "returns :running status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
-      stat = <<EOS
+      rc: 0,
+      status: :queued
+    },
+    {
+      job_id: "19352",
+      command: "qstat 19352",
+      out: <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 R batch
 EOS
-      expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
-      expect( out[:status] ).to eq :running
-    end
-
-    it "returns :finished status by qstat" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
-      stat = <<EOS
+      rc: 0,
+      status: :running
+    },
+    {
+      job_id: "19352",
+      command: "qstat 19352",
+      out: <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 C batch
 EOS
-      expect(s).to receive(:`).with(command).and_return(stat)
-      out = s.status(19352)
-      expect( out[:status] ).to eq :finished
-    end
+      rc: 0,
+      status: :finished
+    },
+    {
+      job_id: "19352",
+      command: "qstat 19352",
+      out: <<EOS,
+EOS
+      rc: 153,
+      status: :finished
+    }
+  ]
 
-    it "returns :finished status by qstat when job_id is not found" do
-      s = Xsub::Torque.new
-      command = "qstat 19352"
-      expect(s).to receive(:`).with(command) { `exit 153 > /dev/null` }
-      out = s.status(19352)
-      expect( out[:status] ).to eq :finished
-    end
-  end
+  it_behaves_like "Scheduler#status", status_test_cases
 
-  describe "#all_status" do
+  it_behaves_like "Scheduler#all_status", "qstat && pbsnodes -a"
 
-    it "returns status in string" do
-      s = Xsub::Torque.new
-      expect(s).to receive(:`).with("qstat && pbsnodes -a").and_return("abc")
-      expect( s.all_status ).to eq "abc"
-    end
-  end
-
-  describe "#delete" do
-
-    it "cancels job by qdel command" do
-      s = Xsub::Torque.new
-      expect(s).to receive(:`).with("qdel 12345")
-      s.delete("12345")
-    end
-  end
+  it_behaves_like "Scheduler#delete", "qdel"
 end
 

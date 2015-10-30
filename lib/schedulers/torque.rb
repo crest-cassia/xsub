@@ -40,7 +40,7 @@ EOS
         log.puts "rc is not zero: #{output}"
         raise "rc is not zero: #{output}"
       end
-      job_id = output.lines.to_a.last.to_i
+      job_id = output.lines.to_a.last.to_i.to_s
       log.puts "job_id: #{job_id}"
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
