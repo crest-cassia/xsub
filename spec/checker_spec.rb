@@ -17,6 +17,9 @@ RSpec.describe Xsub::Checker do
       argv = %w(1234)
       expect(@checker.scheduler).to receive(:status).with("1234").and_call_original
       @checker.run(argv)
+      out = JSON.load($stdout.flush.string)
+      expect(out).to be_a(Hash)
+      expect(out.has_key?("status")).to be_truthy
     end
   end
 
@@ -25,6 +28,7 @@ RSpec.describe Xsub::Checker do
     it "return status of all the running jobs" do
       expect(@checker.scheduler).to receive(:all_status).and_call_original
       @checker.run([])
+      expect( $stdout.string ).to_not be_empty
     end
   end
 end
