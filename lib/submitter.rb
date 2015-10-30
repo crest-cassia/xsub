@@ -26,7 +26,10 @@ module Xsub
       verify_parameter_format
       @scheduler.validate_parameters(@parameters)
       parent_script_path = prepare_parent_script
-      output = @scheduler.submit_job( parent_script_path, @work_dir, @log_dir )
+      File.open( File.join(@log_dir, 'xsub.log'), 'w') { |log|
+        output = @scheduler.submit_job( parent_script_path, @work_dir, @log_dir, log )
+        log.flush
+      }
       $stdout.print JSON.pretty_generate(output)
     end
 

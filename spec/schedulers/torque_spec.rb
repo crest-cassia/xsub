@@ -58,15 +58,16 @@ RSpec.describe Xsub::Torque do
       s = Xsub::Torque.new
       command = "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test"
       expect(s).to receive(:`).with(command).and_return("19352.localhost")
-      out = s.submit_job("job.sh", "work_test", "log_test")
+      out = s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
       expect( out[:job_id] ).to eq 19352
     end
 
     it "prints log in the log directory" do
       s = Xsub::Torque.new
       allow(s).to receive(:`).and_return("19352.localhost")
-      s.submit_job("job.sh", "work_test", "log_test")
-      expect( File.exist?("log_test/xsub.log") ).to be_truthy
+      log = StringIO.new
+      s.submit_job("job.sh", "work_test", "log_test", log)
+      expect( log.string ).to_not be_empty
     end
   end
 

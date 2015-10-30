@@ -32,11 +32,9 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir)
-      log = File.open( File.join(log_dir,"xsub.log"), 'w')
+    def submit_job(script_path, work_dir, log_dir, log)
       cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(work_dir)} -o #{File.expand_path(log_dir)} -e #{File.expand_path(log_dir)}"
-      log.puts "cmd: #{cmd}"
-      log.puts "time: #{DateTime.now}"
+      log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`
       unless $?.to_i == 0
         log.puts "rc is not zero: #{output}"
@@ -44,7 +42,6 @@ EOS
       end
       job_id = output.lines.to_a.last.to_i
       log.puts "job_id: #{job_id}"
-      log.flush && log.close
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 

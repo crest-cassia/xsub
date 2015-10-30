@@ -45,11 +45,10 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir)
+    def submit_job(script_path, work_dir, log_dir, log)
       stdout_path = File.join( File.expand_path(log_dir), '%j.o.txt')
       stderr_path = File.join( File.expand_path(log_dir), '%j.e.txt')
       job_stat_path = File.join( File.expand_path(log_dir), '%j.i.txt')
-      log = File.open( File.join(log_dir, 'xsub.log'), 'w' )
 
       cmd = "cd #{File.expand_path(work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
       log.puts "cmd: #{cmd}"
@@ -66,7 +65,6 @@ EOS
         log.puts "failed to get job_id: #{output}"
         raise "failed to get job_id: #{output}"
       end
-      log.flush && log.close
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 

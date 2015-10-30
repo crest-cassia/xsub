@@ -70,7 +70,7 @@ RSpec.describe Xsub::K do
       command = "cd #{Dir.pwd}/work_test && pjsub #{Dir.pwd}/job.sh -o #{Dir.pwd}/log_test/%j.o.txt -e #{Dir.pwd}/log_test/%j.e.txt --spath #{Dir.pwd}/log_test/%j.i.txt < /dev/null"
       out = "[INFO] PJM 0000 pjsub Job 112109 submitted."
       expect(s).to receive(:`).with(command).and_return(out)
-      out = s.submit_job("job.sh", "work_test", "log_test")
+      out = s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
       expect( out[:job_id] ).to eq "112109"
     end
 
@@ -78,8 +78,9 @@ RSpec.describe Xsub::K do
       s = Xsub::K.new
       out = "[INFO] PJM 0000 pjsub Job 112109 submitted."
       allow(s).to receive(:`).and_return(out)
-      s.submit_job("job.sh", "work_test", "log_test")
-      expect( File.exist?("log_test/xsub.log") ).to be_truthy
+      log = StringIO.new
+      s.submit_job("job.sh", "work_test", "log_test", log)
+      expect( log.string ).to_not be_empty
     end
 
     it "raises an error when staging option is invalid" do
@@ -90,7 +91,7 @@ Refer to the staging information file. (J5333b14881e31ebcd2000001.sh.s2366652)
 EOS
       allow(s).to receive(:`).and_return(out)
       expect {
-        s.submit_job("job.sh", "work_test", "log_test")
+        s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
       }.to raise_error(/staging option error/)
     end
   end
