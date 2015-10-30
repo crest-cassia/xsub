@@ -15,7 +15,6 @@ Although only a few types of schedulers are currently supported, you can send an
 
 - Install Ruby 1.9 or later.
   - We recommend using [rbenv](https://github.com/sstephenson/rbenv) to install Ruby.
-  - In some environments such as fx10, it does not work with Ruby 2.1. In such case, please use 2.0 or 1.9.
 
 - Clone this repository
 
@@ -201,6 +200,9 @@ delete a job
     - Locate your new class at `lib/schedulers` directory. Then your file is automatically loaded.
     - Because this library is small, you can read the whole source code easily.
     - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
+  - set `XSUB_TYPE` environment variable to your new class name.
+    - For example, if your class name is `MyScheduler`, then write `XSUB_TYPE=MyScheduler` to your `.bash_profile`. (case-insensitive)
+
 - We would appreciate it if you send us your enhancement as a pull request.
 
 ### Sending pull request
