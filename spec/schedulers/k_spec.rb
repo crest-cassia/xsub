@@ -117,13 +117,6 @@ EOS
 
   it_behaves_like "Scheduler#all_status", "pjstat"
 
-  describe "#delete" do
-
-    it "cancels job by qdel command" do
-      s = Xsub::K.new
-      expect(s).to receive(:`).with("pjdel 112113")
-      s.delete("112113")
-    end
-  end
+  it_behaves_like "Scheduler#delete", "pjdel"
 end
 

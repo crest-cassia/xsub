@@ -139,4 +139,15 @@ RSpec.shared_examples "Scheduler#all_status" do |expected_cmd|
   end
 end
 
-RSpec.shared_examples "Scheduler#delete"
+RSpec.shared_examples "Scheduler#delete" do |expected_cmd|
+
+  describe "#delete" do
+
+    it "cancels job by #{expected_cmd}" do
+      s = described_class.new
+      expect(s).to receive(:`).with("#{expected_cmd} 1234")
+      s.delete("1234")
+    end
+  end
+end
+
