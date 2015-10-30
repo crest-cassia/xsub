@@ -3,7 +3,7 @@ module Xsub
   class None < Scheduler
 
     TEMPLATE = <<EOS
-. <%= job_file %>
+. <%= _job_file %>
 EOS
 
     PARAMETERS = {
@@ -11,13 +11,13 @@ EOS
       "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'}
     }
 
-    def submit_job(script_path)
+    def submit_job(script_path, work_dir, log_dir)
       full_path = File.expand_path(script_path)
       cmd = "nohup bash #{full_path} > /dev/null 2>&1 < /dev/null & echo $!"
       @logger.info "#{cmd} is invoked"
       output = ""
-      FileUtils.mkdir_p(@work_dir)
-      Dir.chdir(@work_dir) {
+      FileUtils.mkdir_p(work_dir)
+      Dir.chdir(work_dir) {
         output = `#{cmd}`
         raise "rc is not zero: #{cmd}" unless $?.to_i == 0
       }
@@ -36,7 +36,7 @@ EOS
     def all_status
       cmd = "ps uxr | head -n 10"
       output = `#{cmd}`
-      {raw_output: output.lines.map(&:chomp).to_a}
+      output
     end
 
     def delete(job_id)
@@ -47,9 +47,9 @@ EOS
         raise "kill command failed: #{cmd}" unless $?.to_i == 0
         output = "process is killed"
       else
-        output = "Process is not found"
+        raise "Process is not found"
       end
-      {raw_output: output.lines.map(&:chomp).to_a}
+      output
     end
   end
 end
