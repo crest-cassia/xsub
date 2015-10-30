@@ -9,7 +9,6 @@ module Xsub
 
     def initialize(scheduler)
       @scheduler = scheduler
-      raise unless @scheduler.is_a?(Scheduler)
     end
 
     def run(argv)
@@ -18,10 +17,11 @@ module Xsub
       job_id = argv[0]
       if job_id
         output = @scheduler.status(job_id)
+        $stdout.print JSON.pretty_generate(output)
       else
         output = @scheduler.all_status
+        $stdout.print output
       end
-      $stdout.print output
     end
   end
 end

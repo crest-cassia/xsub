@@ -48,7 +48,6 @@ module Xsub
           if log.size > 0
             @log_dir = log.sub(/^=/,'')
             FileUtils.mkdir_p(@log_dir)
-            log_file = File.join(@log_dir, 'xsub.log')
           end
         end
 
