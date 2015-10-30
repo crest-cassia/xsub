@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/crest-cassia/xsub.svg?branch=master)](https://travis-ci.org/crest-cassia/xsub)
+[![Coverage Status](https://coveralls.io/repos/crest-cassia/xsub/badge.svg?branch=master&service=github)](https://coveralls.io/github/crest-cassia/xsub?branch=master)
+
 # xsub
 
 A wrapper for job schedulers.
