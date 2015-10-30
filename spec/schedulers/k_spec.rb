@@ -1,4 +1,3 @@
-require 'stringio'
 require_relative '../support/shared_examples_for_scheduler'
 
 RSpec.describe Xsub::K do
