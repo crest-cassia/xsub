@@ -105,7 +105,7 @@ submit a job to a scheduler
   - when "-t" option is given, it prints JSON as follows.
     - it must have a "parameters" field.
     - Each parameter has "description", "default", and "format" fields.
-      - "description" and "format" fields are optional.
+      - "description" and/or "format" fields can be an empty string.
       - format is given as a regular expression. If the given parameter does not match the format, xsub fails.
 
   ```json
@@ -169,9 +169,8 @@ show a status of a job
       - "queued" means the job is in queue.
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
-    - "log_paths" fileds has an array of paths to scheduler log files.
-- when job_id is not given, the output format is not defined.
-    - it usually prints the output of `qsub` command.
+- when job_id is not given, it prints the status of all jobs.
+    - output format is not defined. It usually prints the output of `qsub` command.
 
 - **example**
 
@@ -186,7 +185,7 @@ delete a job
 - **usage**: `xdel {job_id}`
   - cancel the specified job
     - if the job finished successfully, return code is zero.
-    - if the job is not found, it returns non-zero.
+    - if the cancel command fails, return code is non-zero.
   - output format is not defined.
 
 ## Extending
@@ -194,7 +193,9 @@ delete a job
 - If you are not familiar with Ruby, just send us an email.
 - If you are familiar with Ruby, you can extend xsub by yourself.
   - Fork the repository.
-  - Add your file to `lib/xsub/schedulers` and edit `lib/xsub.rb` properly.
+  - Add another class which inherits `Xsub::Scheduler` class.
+    - Define the same methods and constants as the existing classes.
+    - Locate your new class at `lib/schedulers` directory. Then your file is automatically loaded.
     - Because this library is small, you can read the whole source code easily.
     - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
 - We would appreciate it if you send us your enhancement as a pull request.
