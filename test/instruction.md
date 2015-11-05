@@ -52,7 +52,7 @@ xsub -t
 
 - run xstat without argument
     ```
-    xsub
+    xstat
     ```
     - verify you see the status of the jobs submitted to the scheduler
 
