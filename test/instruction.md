@@ -28,7 +28,7 @@ xsub -t
 
 - run xsub and xstat command as follows
     ```
-    xsub sleep5.sh | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
+    xsub sleep5.sh -d work_dir -l log_dir | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
     xstat 1234
     ```
     - verify JSON having "status" key is printed to stdout as follows
@@ -47,7 +47,7 @@ xsub -t
         ```
     - to clean up,
         ```
-        rm sleep5_xsub*.sh xsub.log pwd.txt
+        rm -rf work_dir log_dir
         ```
 
 - run xstat without argument
@@ -60,12 +60,12 @@ xsub -t
 
 - run the following command. (replace the job id properly.)
     ```
-xsub sleep5.sh | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
+xsub sleep5.sh -d work_dir -l log_dir | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
 xdel 1234
 xstat 1234
     ```
     - verify the job is deleted using stat command of the scheduler
     - to clean up,
         ```
-        rm sleep5_xsub*.sh xsub.log pwd.txt
+        rm -rf work_dir log_dir
         ```
