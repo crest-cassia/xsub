@@ -1,3 +1,5 @@
+require_relative '../scheduler'
+
 module Xsub
 
   class SR16000 < Scheduler

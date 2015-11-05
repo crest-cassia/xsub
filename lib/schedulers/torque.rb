@@ -1,5 +1,5 @@
 require 'date'
-require 'json'
+require_relative '../scheduler'
 
 module Xsub
 

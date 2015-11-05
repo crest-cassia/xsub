@@ -1,3 +1,5 @@
+require_relative '../scheduler'
+
 module Xsub
 
   class K < Scheduler

@@ -1,6 +1,5 @@
 require 'optparse'
 require 'json'
-require 'logger'
 require 'fileutils'
 
 module Xsub
