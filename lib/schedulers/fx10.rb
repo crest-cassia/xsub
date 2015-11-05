@@ -1,6 +1,8 @@
+require_relative '../scheduler'
+
 module Xsub
 
-  class SchedulerFx10 < Base
+  class Fx10 < Scheduler
 
     TEMPLATE = <<EOS
 #!/bin/bash -x
@@ -12,7 +14,7 @@ module Xsub
 #PJM -s
 LANG=C
 . /work/system/Env_base
-. <%= job_file %>
+. <%= _job_file %>
 EOS
 
     PARAMETERS = {
@@ -32,7 +34,7 @@ EOS
       tmp_node = prm['node'].split("x")
       tmp_shape = prm['shape'].split("x")
       unless tmp_node.length == tmp_shape.length
-        raise "node and shape must be a same format like node=>4x3, shape=>1x1"
+        raise "node and shape must be same format like node=>4x3, shape=>1x1"
       end
       tmp_node.each_with_index do |n, i|
         unless n >= tmp_shape[i]
@@ -45,19 +47,26 @@ EOS
       end
     end
 
-    def submit_job(script_path)
-      FileUtils.mkdir_p(@work_dir)
-      FileUtils.mkdir_p(@log_dir)
-      stdout_path = File.join( File.expand_path(@log_dir), '%j.o.txt')
-      stderr_path = File.join( File.expand_path(@log_dir), '%j.e.txt')
-      job_stat_path = File.join( File.expand_path(@log_dir), '%j.i.txt')
+    def submit_job(script_path, work_dir, log_dir, log)
+      stdout_path = File.join( File.expand_path(log_dir), '%j.o.txt')
+      stderr_path = File.join( File.expand_path(log_dir), '%j.e.txt')
+      job_stat_path = File.join( File.expand_path(log_dir), '%j.i.txt')
 
-      cmd = "cd #{File.expand_path(@work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
-      @logger.info "cmd: #{cmd}"
+      cmd = "cd #{File.expand_path(work_dir)} && pjsub #{File.expand_path(script_path)} -o #{stdout_path} -e #{stderr_path} --spath #{job_stat_path}"
+      log.puts "cmd: #{cmd}"
+      log.puts "date: #{DateTime.now}"
       output = `#{cmd}`
-      raise "rc is not zero: #{output}" unless $?.to_i == 0
-      job_id = output.lines.to_a.last
-      @logger.info "job_id: #{job_id}"
+      unless $?.to_i == 0
+        log.puts "rc is not zero: #{output}"
+        raise "rc is not zero: #{output}"
+      end
+      if output.lines.to_a.last =~ /Job (\d+) submitted/
+        job_id = $1
+        log.puts "job_id: #{job_id}"
+      else
+        log.puts "failed to get job_id: #{output}"
+        raise "failed to get job_id: #{output}"
+      end
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
@@ -84,14 +93,14 @@ EOS
     def all_status
       cmd = "pjstat"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "pjdel #{job_id}"
       output = `#{cmd}`
-      output = "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "pjdel failed: rc=#{$?.to_i}" unless $?.to_i == 0
+      output
     end
   end
 end

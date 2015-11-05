@@ -1,10 +1,8 @@
 #!/usr/bin/env ruby
 
-root = File.expand_path('../../', __FILE__)
-$:.unshift File.expand_path('lib', root)
+Dir[File.join( File.dirname(__FILE__), "../lib/**/*.rb" )].each {|f| require f}
 
-require 'xsub'
-require 'xsub/runner'
-Version = Xsub::VERSION
+scheduler = Xsub::Scheduler.get_scheduler.new
+s = Xsub::Submitter.new(scheduler)
+s.run(ARGV)
 
-Xsub::Submit.run(ARGV)

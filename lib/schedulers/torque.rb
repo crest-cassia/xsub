@@ -1,13 +1,16 @@
+require 'date'
+require_relative '../scheduler'
+
 module Xsub
 
-  class SchedulerTorque < Base
+  class Torque < Scheduler
 
     TEMPLATE = <<EOS
 #!/bin/bash -x
 #PBS -l nodes=<%= mpi_procs.to_i*omp_threads.to_i/ppn.to_i %>:ppn=<%= ppn %>
 #PBS -l walltime=<%= walltime %>
 LANG=C
-. <%= job_file %>
+. <%= _job_file %>
 EOS
 
     PARAMETERS = {
@@ -29,14 +32,16 @@ EOS
       end
     end
 
-    def submit_job(script_path)
-      FileUtils.mkdir_p(@work_dir)
-      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(@work_dir)} -o #{File.expand_path(@log_dir)} -e #{File.expand_path(@log_dir)}"
-      @logger.info "cmd: #{cmd}"
+    def submit_job(script_path, work_dir, log_dir, log)
+      cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(work_dir)} -o #{File.expand_path(log_dir)} -e #{File.expand_path(log_dir)}"
+      log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`
-      raise "rc is not zero: #{output}" unless $?.to_i == 0
-      job_id = output.lines.to_a.last.to_i
-      @logger.info "job_id: #{job_id}"
+      unless $?.to_i == 0
+        log.puts "rc is not zero: #{output}"
+        raise "rc is not zero: #{output}"
+      end
+      job_id = output.lines.to_a.last.to_i.to_s
+      log.puts "job_id: #{job_id}"
       {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
     end
 
@@ -63,14 +68,15 @@ EOS
     def all_status
       cmd = "qstat && pbsnodes -a"
       output = `#{cmd}`
-      { raw_output: output.lines.map(&:chomp).to_a }
+      output
     end
 
     def delete(job_id)
       cmd = "qdel #{job_id}"
       output = `#{cmd}`
-      output = "qdel failed" unless $?.to_i == 0
-      {raw_output: output.lines.map(&:chomp).to_a }
+      raise "failed to delete job: #{job_id}" unless $?.to_i == 0
+      output
     end
   end
 end
+

@@ -1,0 +1,23 @@
+language: ruby
+rvm:
+- 1.9.2
+- 1.9.3
+- 2.0.0
+- 2.1.0
+- 2.1.1
+- 2.1.2
+- 2.1.3
+- 2.1.4
+- 2.1.5
+- 2.1.6
+- 2.1.7
+- 2.2.0
+- 2.2.1
+- 2.2.2
+- 2.2.3
+sudo: false
+script:
+- bundle exec rspec
+notifications:
+  slack:
+    secure: YHtSwtNqOPj9a96CSNOhDu2eVK+DuqSc5dmQYn0PKnvl3rxtFV+cbRntk3ypaVDm23QEm8K2tHkQE4trjR53FGvMI/wW4YRtJrgf8THz4dy6/LmYPNhW4Mz2IUMfab0MzS+gncbMNsIkufAzOaA7RGGkXoO0Zf6eB/cRKsF4cDY=

@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/crest-cassia/xsub.svg?branch=master)](https://travis-ci.org/crest-cassia/xsub)
+[![Coverage Status](https://coveralls.io/repos/crest-cassia/xsub/badge.svg?branch=master&service=github)](https://coveralls.io/github/crest-cassia/xsub?branch=master)
+
 # xsub
 
 A wrapper for job schedulers.
@@ -12,7 +15,6 @@ Although only a few types of schedulers are currently supported, you can send an
 
 - Install Ruby 1.9 or later.
   - We recommend using [rbenv](https://github.com/sstephenson/rbenv) to install Ruby.
-  - In some environments such as fx10, it does not work with Ruby 2.1. In such case, please use 2.0 or 1.9.
 
 - Clone this repository
 
@@ -105,7 +107,7 @@ submit a job to a scheduler
   - when "-t" option is given, it prints JSON as follows.
     - it must have a "parameters" field.
     - Each parameter has "description", "default", and "format" fields.
-      - "description" and "format" fields are optional.
+      - "description" and/or "format" fields can be an empty string.
       - format is given as a regular expression. If the given parameter does not match the format, xsub fails.
 
   ```json
@@ -169,9 +171,8 @@ show a status of a job
       - "queued" means the job is in queue.
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
-    - "log_paths" fileds has an array of paths to scheduler log files.
-- when job_id is not given, the output format is not defined.
-    - it usually prints the output of `qsub` command.
+- when job_id is not given, it prints the status of all jobs.
+    - output format is not defined. It usually prints the output of `qsub` command.
 
 - **example**
 
@@ -186,7 +187,7 @@ delete a job
 - **usage**: `xdel {job_id}`
   - cancel the specified job
     - if the job finished successfully, return code is zero.
-    - if the job is not found, it returns non-zero.
+    - if the cancel command fails, return code is non-zero.
   - output format is not defined.
 
 ## Extending
@@ -194,9 +195,14 @@ delete a job
 - If you are not familiar with Ruby, just send us an email.
 - If you are familiar with Ruby, you can extend xsub by yourself.
   - Fork the repository.
-  - Add your file to `lib/xsub/schedulers` and edit `lib/xsub.rb` properly.
+  - Add another class which inherits `Xsub::Scheduler` class.
+    - Define the same methods and constants as the existing classes.
+    - Locate your new class at `lib/schedulers` directory. Then your file is automatically loaded.
     - Because this library is small, you can read the whole source code easily.
     - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
+  - set `XSUB_TYPE` environment variable to your new class name.
+    - For example, if your class name is `MyScheduler`, then write `XSUB_TYPE=MyScheduler` to your `.bash_profile`. (case-insensitive)
+
 - We would appreciate it if you send us your enhancement as a pull request.
 
 ### Sending pull request
