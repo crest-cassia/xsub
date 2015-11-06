@@ -32,10 +32,7 @@ EOS
       mpi = prm["mpi_procs"].to_i
       omp = prm["omp_threads"].to_i
       num_nodes = prm["num_nodes"].to_i
-      unless mpi >= 1 and omp >= 1 and ppn >= 1
-        raise "mpi_procs, omp_threads, and ppn must be larger than 1"
-      end
-      unless mpi_procs%num_nodes == 0
+      unless mpi%num_nodes == 0
         raise "mpi_procs must be a multiple of num_nodes"
       end
     end
