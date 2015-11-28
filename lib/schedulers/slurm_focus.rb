@@ -72,6 +72,10 @@ EOS
           :running
         when /^(HLD|ERR|EXT|CCL)$/
           :finished
+        when /uiud/
+          :finished
+          # sometimes, fjstat returns empty string for status.
+          # in such a case, uiud.... is obtained by `last_line.split[3]`
         else
           raise "unknown output: #{output}"
         end

@@ -80,6 +80,19 @@ EOS
       job_id: "532271",
       command: "fjstat 532271",
       out: <<EOS,
+    QUEUED    RUNNING       HOLD     ERROR     TOTAL
+         0          0          0         0         1
+   s     0          0          0         0         1
+  JOB_ID        JOB_NAME  MD   ST         USER      START_DATE  ELAPSE_LIM  NODE_REQUIRE
+  547666 sleep5_xsub3.sh  NM          uiud0019  11/28 15:01:52  0000:06:00
+EOS
+      rc: 0,
+      status: :finished
+    },
+    {
+      job_id: "532271",
+      command: "fjstat 532271",
+      out: <<EOS,
 Invalid job ID is specified : 532271
 EOS
       rc: 0,
