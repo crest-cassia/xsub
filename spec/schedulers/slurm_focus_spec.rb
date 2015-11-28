@@ -19,7 +19,7 @@ RSpec.describe Xsub::SLURM_FOCUS do
 
   submit_test_ok_cases = [
     {
-      command: "fjsub #{Dir.pwd}/job.sh -o #{Dir.pwd}/log_test/stdout.%j -e #{Dir.pwd}/log_test/stderr.%j",
+      command: "fjsub -o #{Dir.pwd}/log_test/stdout.%j -e #{Dir.pwd}/log_test/stderr.%j #{Dir.pwd}/job.sh",
       out: "Submitted batch job 532271\n",
       rc: 0,
       job_id: "532271"
