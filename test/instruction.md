@@ -40,7 +40,7 @@ xsub -t
     "66694 ttys001    0:00.00 bash /Users/murase/work/xsub/test/sleep5_xsub2.sh"
   ]
     ```
-    - verify status is submitted or running
+    - verify status is queued or running
     - after job finished, run xstat command again and verify the status changed to finished
         ```
         xstat 66694
