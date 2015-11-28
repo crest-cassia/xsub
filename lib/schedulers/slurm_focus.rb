@@ -38,48 +38,55 @@ EOS
     end
 
     def submit_job(script_path, work_dir, log_dir, log)
-      cmd = "sbatch #{File.expand_path(script_path)} -o #{File.expand_path(log_dir)}/stdout.%j -e #{File.expand_path(log_dir)}/stderr.%j"
+      cmd = "fjsub #{File.expand_path(script_path)} -o #{File.expand_path(log_dir)}/stdout.%j -e #{File.expand_path(log_dir)}/stderr.%j"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`
       unless $?.to_i == 0
         log.puts "rc is not zero: #{output}"
         raise "rc is not zero: #{output}"
       end
-      ## TODO : parse output of sbatch command
-      job_id = output.lines.to_a.last.to_i.to_s
-      log.puts "job_id: #{job_id}"
-      {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+      if output =~ /Submitted batch job (\d+)/
+        job_id = $1
+        log.puts "job_id: #{job_id}"
+        {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+      else
+        raise "unknown output format: #{output}"
+      end
     end
 
     def status(job_id)
-      cmd = "squeue #{job_id}"
+      cmd = "fjstat #{job_id}"
       output = `#{cmd}`
-      if $?.to_i == 0
-        status = case output.lines.to_a.last.split[4]
-        when /^(CF|PD)$/
+      unless $?.to_i == 0
+        raise "rc is not zero. rc: #{$?.to_i}"
+      end
+
+      last_line = output.lines.to_a.last
+      if last_line =~ /^Invalid job ID/
+        status = :finished
+      else
+        status = case last_line.split[3]
+        when /^QUE$/
           :queued
-        when /^(CG|R|S)$/
+        when /^RUN$/
           :running
-        when /^(CA|CD|F|NF|PR|TO)$/
+        when /^(HLD|ERR|EXT|CCL)$/
           :finished
         else
           raise "unknown output: #{output}"
         end
-      else
-        # TODO : check the specification of unknown job_id
-        status = :finished
       end
       { status: status, raw_output: output.lines.map(&:chomp).to_a }
     end
 
     def all_status
-      cmd = "squeues && freenodes"
+      cmd = "fjstat && squeues"
       output = `#{cmd}`
       output
     end
 
     def delete(job_id)
-      cmd = "scancel #{job_id}"
+      cmd = "fjdel #{job_id}"
       output = `#{cmd}`
       raise "failed to delete job: #{job_id}" unless $?.to_i == 0
       output
