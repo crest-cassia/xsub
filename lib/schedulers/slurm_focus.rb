@@ -11,7 +11,7 @@ module Xsub
 #SBATCH -N <%= num_nodes %>
 #SBATCH --ntasks-per-node=<%= mpi_procs/num_nodes %>
 #SBATCH -c <%= omp_threads %>
-#SBATCH --work_dir <%= _work_dir %>
+#SBATCH --workdir=<%= _work_dir %>
 
 LANG=C
 module load PrgEnv-intel module load impi
