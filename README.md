@@ -46,11 +46,11 @@ List of available schedulers.
   - a scheduler for fx10.
   - `pjsub`, `pjstat`, `pjdel` commands are used.
 - **k**
-  - a scheduler for the k-computer.
+  - [K computer](http://www.aics.riken.jp/en/).
   - `pjsub`, `pjstat`, `pjdel` commands are used.
   - Files in the work_dir are staged-in.
   - Files created in the `work_dir` are staged-out.
-- **FOCUS**
+- **slurm_focus**
   - [FOCUS supercomputer system](http://www.j-focus.or.jp/focus/)
   - `fjsub`, `fjstat`, `fjdel` commands are used.
 
