@@ -24,7 +24,7 @@ Although only a few types of schedulers are currently supported, you can send an
 
 - set `PATH` and `XSUB_TYPE` environment variables in your ~/.bash_profile
   - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
-  - set XSUB_TYPE to be either "none", "torque", "fx10", or "k", depending on the scheduler you are using.
+  - set XSUB_TYPE to be one of the supported schedulers list below.
   - If you run xsub from OACIS, please set these variables in .bash_profile even if your login shell is zsh. This is because OACIS executes xsub on bash launched as a login shell.
     - do not set these environment variables in .bashrc because it is loaded only in an interactive shell, not in a login shell.
 
