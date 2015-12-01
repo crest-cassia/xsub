@@ -24,7 +24,7 @@ Although only a few types of schedulers are currently supported, you can send an
 
 - set `PATH` and `XSUB_TYPE` environment variables in your ~/.bash_profile
   - set `PATH` so as to include the bin directory of xsub. Then you can use `xsub`, `xstat`, and `xdel` commands.
-  - set XSUB_TYPE to be one of the supported schedulers list below.
+  - set XSUB_TYPE to be one of the supported schedulers listed below.
   - If you run xsub from OACIS, please set these variables in .bash_profile even if your login shell is zsh. This is because OACIS executes xsub on bash launched as a login shell.
     - do not set these environment variables in .bashrc because it is loaded only in an interactive shell, not in a login shell.
 
@@ -175,7 +175,7 @@ show a status of a job
       - "running" means the job is running.
       - "finished" means the job is finished or the job is not found.
 - when job_id is not given, it prints the status of all jobs.
-    - output format is not defined. It usually prints the output of `qsub` command.
+    - output format is not defined. It usually prints the output of `qstat` command.
 
 - **example**
 
@@ -202,7 +202,7 @@ delete a job
     - Define the same methods and constants as the existing classes.
     - Locate your new class at `lib/schedulers` directory. Then your file is automatically loaded.
     - Because this library is small, you can read the whole source code easily.
-    - Please make sure that the output format is same as the existing one so that it can be used by OACIS.
+    - After you implemented your scheduler class, test following the instructions [here](test/instruction.md).
   - set `XSUB_TYPE` environment variable to your new class name.
     - For example, if your class name is `MyScheduler`, then write `XSUB_TYPE=MyScheduler` to your `.bash_profile`. (case-insensitive)
 
