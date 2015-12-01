@@ -50,6 +50,9 @@ List of available schedulers.
   - `pjsub`, `pjstat`, `pjdel` commands are used.
   - Files in the work_dir are staged-in.
   - Files created in the `work_dir` are staged-out.
+- **FOCUS**
+  - [FOCUS supercomputer system](http://www.j-focus.or.jp/focus/)
+  - `fjsub`, `fjstat`, `fjdel` commands are used.
 
 ## Contact
 
