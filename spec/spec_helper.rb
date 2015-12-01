@@ -96,6 +96,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
+require 'pp'
 Dir[File.join( File.dirname(__FILE__), "../lib/**/*.rb" )].each {|f| require f}
 
 class Dummy < Xsub::Scheduler
