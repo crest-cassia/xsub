@@ -78,8 +78,19 @@ EOS
 EOS
       rc: 153,
       status: :finished
+    },
+    {
+      job_id: "19352",
+      command: "qstat 19352",
+      out: <<EOS,
+Job ID                    Name             User            Time Use S Queue
+------------------------- ---------------- --------------- -------- - -----
+19352.localhost           ...b0000_xsub.sh test_user       02:13:28 E batch
+EOS
+      rc: 0,
+      status: :running
     }
-  ]
+    ]
 
   it_behaves_like "Scheduler#status", status_test_cases
 
