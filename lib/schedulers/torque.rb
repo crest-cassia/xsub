@@ -52,7 +52,7 @@ EOS
         status = case output.lines.to_a.last.split[4]
         when /Q/
           :queued
-        when /[RT]/
+        when /[RTE]/
           :running
         when /C/
           :finished
