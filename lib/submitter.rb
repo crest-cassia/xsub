@@ -35,8 +35,8 @@ module Xsub
     def parse_arguments(argv)
       OptionParser.new { |parser|
         parser.on('-t', '--show-template', 'show template') do |t|
-          h = { parameters: @scheduler.class::PARAMETERS,
-                template: @scheduler.class::TEMPLATE.lines.map(&:chomp)
+          h = { :parameters => @scheduler.class::PARAMETERS,
+                :template => @scheduler.class::TEMPLATE.lines.map(&:chomp)
               }
           $stdout.print JSON.pretty_generate(h)
           exit
@@ -88,7 +88,7 @@ module Xsub
 
     def prepare_parent_script
       merged = @parameters.merge(
-        _job_file: File.expand_path(@script), _work_dir: File.expand_path(@work_dir)
+        :_job_file => File.expand_path(@script), :_work_dir => File.expand_path(@work_dir)
       )
       rendered = Template.render(@scheduler.class::TEMPLATE, merged)
       ps_path = parent_script_path( @script )

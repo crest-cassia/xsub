@@ -8,7 +8,7 @@ RSpec.describe Xsub::Template do
         bar: <%= bar %>
       EOS
 
-      rendered = Xsub::Template.render(template, {foo: 1, bar: 2} )
+      rendered = Xsub::Template.render(template, {:foo => 1, :bar => 2} )
 
       expected = <<-EOS
         foo: 1

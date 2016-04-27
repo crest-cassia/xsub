@@ -1,4 +1,4 @@
-require_relative '../scheduler'
+require File.expand_path(File.dirname(__FILE__)+'/../scheduler')
 
 module Xsub
 
@@ -9,8 +9,8 @@ module Xsub
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
-      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'}
+      "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
+      "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'}
     }
 
     def validate_parameters(params)
@@ -28,14 +28,14 @@ EOS
       }
       psid = output.lines.to_a.last.to_i.to_s
       log.puts "process id: #{psid}"
-      {job_id: psid, raw_output: output.lines.map(&:chomp).to_a}
+      {:job_id => psid, :raw_output => output.lines.map(&:chomp).to_a}
     end
 
     def status(job_id)
       cmd = "ps -p #{job_id}"
       output = `#{cmd}`
       status = $?.to_i == 0 ? :running : :finished
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def all_status

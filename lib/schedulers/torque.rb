@@ -1,5 +1,5 @@
 require 'date'
-require_relative '../scheduler'
+require File.expand_path(File.dirname(__FILE__)+'/../scheduler')
 
 module Xsub
 
@@ -14,10 +14,10 @@ LANG=C
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
-      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
-      "ppn" => { description: "Process per nodes", default: 1, format: '^[1-9]\d*$'},
-      "walltime" => { description: "Limit on elapsed time", default: "1:00:00", format: '^\d+:\d{2}:\d{2}$'}
+      "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
+      "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
+      "ppn" => { :description => "Process per nodes", :default => 1, :format => '^[1-9]\d*$'},
+      "walltime" => { :description => "Limit on elapsed time", :default => "1:00:00", :format => '^\d+:\d{2}:\d{2}$'}
     }
 
     def validate_parameters(prm)
@@ -42,7 +42,7 @@ EOS
       end
       job_id = output.lines.to_a.last.to_i.to_s
       log.puts "job_id: #{job_id}"
-      {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+      {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def status(job_id)
@@ -62,7 +62,7 @@ EOS
       else
         status = :finished
       end
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def all_status

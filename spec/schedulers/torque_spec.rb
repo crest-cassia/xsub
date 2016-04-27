@@ -1,4 +1,4 @@
-require_relative '../support/shared_examples_for_scheduler'
+require File.join( File.dirname(__FILE__), '../support/shared_examples_for_scheduler')
 
 RSpec.describe Xsub::Torque do
 
@@ -19,18 +19,18 @@ RSpec.describe Xsub::Torque do
 
   submit_test_ok_cases = [
     {
-      command: "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test",
-      out: "19352.localhost",
-      rc: 0,
-      job_id: "19352"
+      :command => "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test",
+      :out => "19352.localhost",
+      :rc => 0,
+      :job_id => "19352"
     }
   ]
   submit_test_ng_cases = [
     {
-      command: nil,
-      out: nil,
-      rc: 1,
-      error: /rc is not zero/
+      :command => nil,
+      :out => nil,
+      :rc => 1,
+      :error => /rc is not zero/
     }
   ]
 
@@ -39,56 +39,56 @@ RSpec.describe Xsub::Torque do
 
     status_test_cases = [
     {
-      job_id: "19352",
-      command: "qstat 19352",
-      out: <<EOS,
+      :job_id => "19352",
+      :command => "qstat 19352",
+      :out => <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 Q batch
 EOS
-      rc: 0,
-      status: :queued
+      :rc => 0,
+      :status => :queued
     },
     {
-      job_id: "19352",
-      command: "qstat 19352",
-      out: <<EOS,
+      :job_id => "19352",
+      :command => "qstat 19352",
+      :out => <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 R batch
 EOS
-      rc: 0,
-      status: :running
+      :rc => 0,
+      :status => :running
     },
     {
-      job_id: "19352",
-      command: "qstat 19352",
-      out: <<EOS,
+      :job_id => "19352",
+      :command => "qstat 19352",
+      :out => <<EOS,
 Job id                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           job.sh           test_user              0 C batch
 EOS
-      rc: 0,
-      status: :finished
+      :rc => 0,
+      :status => :finished
     },
     {
-      job_id: "19352",
-      command: "qstat 19352",
-      out: <<EOS,
+      :job_id => "19352",
+      :command => "qstat 19352",
+      :out => <<EOS,
 EOS
-      rc: 153,
-      status: :finished
+      :rc => 153,
+      :status => :finished
     },
     {
-      job_id: "19352",
-      command: "qstat 19352",
-      out: <<EOS,
+      :job_id => "19352",
+      :command => "qstat 19352",
+      :out => <<EOS,
 Job ID                    Name             User            Time Use S Queue
 ------------------------- ---------------- --------------- -------- - -----
 19352.localhost           ...b0000_xsub.sh test_user       02:13:28 E batch
 EOS
-      rc: 0,
-      status: :running
+      :rc => 0,
+      :status => :running
     }
     ]
 
