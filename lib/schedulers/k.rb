@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '../scheduler')
+require File.expand_path(File.dirname(__FILE__)+'/../scheduler')
 
 module Xsub
 

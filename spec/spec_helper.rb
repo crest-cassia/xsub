@@ -97,7 +97,7 @@ RSpec.configure do |config|
 end
 
 require 'pp'
-Dir[File.join( File.dirname(__FILE__), "../lib/**/*.rb" )].each {|f| require f}
+Dir[File.expand_path( File.join( File.dirname(__FILE__), "../lib/**/*.rb" ))].each {|f| require f}
 
 class Dummy < Xsub::Scheduler
 
