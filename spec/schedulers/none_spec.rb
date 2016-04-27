@@ -1,4 +1,4 @@
-require_relative '../support/shared_examples_for_scheduler'
+require File.join( File.dirname(__FILE__), '../support/shared_examples_for_scheduler')
 
 RSpec.describe Xsub::None do
 
@@ -15,18 +15,18 @@ RSpec.describe Xsub::None do
 
   submit_test_ok_cases = [
     {
-      command: "nohup bash #{Dir.pwd}/job.sh > /dev/null 2>&1 < /dev/null & echo $!",
-      out: "53839",
-      rc: 0,
-      job_id: "53839"
+      :command => "nohup bash #{Dir.pwd}/job.sh > /dev/null 2>&1 < /dev/null & echo $!",
+      :out => "53839",
+      :rc => 0,
+      :job_id => "53839"
     }
   ]
   submit_test_ng_cases = [
     {
-      command: nil,
-      out: nil,
-      rc: 1,
-      error: /rc is not zero/
+      :command => nil,
+      :out => nil,
+      :rc => 1,
+      :error => /rc is not zero/
     }
   ]
 
@@ -35,23 +35,23 @@ RSpec.describe Xsub::None do
 
   status_test_cases = [
     {
-      job_id: "53839",
-      command: "ps -p 53839",
-      out: <<EOS,
+      :job_id => "53839",
+      :command => "ps -p 53839",
+      :out => <<EOS,
   PID TTY           TIME CMD
 53839 ttys000    0:00.08 /usr/home/job.sh
 EOS
-      rc: 0,
-      status: :running
+      :rc => 0,
+      :status => :running
     },
     {
-      job_id: "53839",
-      command: "ps -p 53839",
-      out: <<EOS,
+      :job_id => "53839",
+      :command => "ps -p 53839",
+      :out => <<EOS,
   PID TTY           TIME CMD
 EOS
-      rc: 1,
-      status: :finished
+      :rc => 1,
+      :status => :finished
     }
   ]
 

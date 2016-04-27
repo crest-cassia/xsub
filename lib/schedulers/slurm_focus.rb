@@ -1,5 +1,5 @@
 require 'date'
-require_relative '../scheduler'
+require File.join( File.dirname(__FILE__), '../scheduler')
 
 module Xsub
 
@@ -22,10 +22,10 @@ EOS
     QUEUE_TYPES = %w(a024h a096h b024h b096h c024h c096h c006m d006h d012h d024h d072h e024h e072h g006m)
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
-      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
-      "queue" => { description: "Job queue", default: QUEUE_TYPES.first, format: "^(#{QUEUE_TYPES.join('|')})$" },
-      "num_nodes" => { description: "Number of nodes", default: 1, format: '^[1-9]\d*$'}
+      "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
+      "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
+      "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :format => "^(#{QUEUE_TYPES.join('|')})$" },
+      "num_nodes" => { :description => "Number of nodes", :default => 1, :format => '^[1-9]\d*$'}
     }
 
     def validate_parameters(prm)
@@ -48,7 +48,7 @@ EOS
       if output =~ /Submitted batch job (\d+)/
         job_id = $1
         log.puts "job_id: #{job_id}"
-        {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+        {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }
       else
         raise "unknown output format: #{output}"
       end
@@ -80,7 +80,7 @@ EOS
           raise "unknown output: #{output}"
         end
       end
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def all_status

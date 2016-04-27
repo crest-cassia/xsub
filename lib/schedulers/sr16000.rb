@@ -1,4 +1,4 @@
-require_relative '../scheduler'
+require File.join( File.dirname(__FILE__), '../scheduler')
 
 module Xsub
 
@@ -27,9 +27,9 @@ export XLSMPOPTS="spins=0:yields=0:parthds=1"
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 64, format: '^[1-9]\d*$'},
-      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
-      "job_class" => { description: "Job class", default: "c", format: ''},
+      "mpi_procs" => { :description => "MPI process", :default => 64, :format => '^[1-9]\d*$'},
+      "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
+      "job_class" => { :description => "Job class", :default => "c", :format => ''},
     }
 
     def validate_parameters(prm)
@@ -61,7 +61,7 @@ EOS
         raise "unexpected format"
       end
       log.puts "job_id: #{job_id}"
-      {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+      {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def status(job_id)
@@ -86,7 +86,7 @@ EOS
       else
         status = :finished
       end
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def all_status

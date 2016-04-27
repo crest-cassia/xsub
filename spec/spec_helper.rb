@@ -111,17 +111,17 @@ work_dir:<%= _work_dir %>
 
   PARAMETERS = {
     "mpi_procs" => {
-      description: "MPI process",
-      default: 1,
-      format: '^[1-9]\d*$'},
+      :description => "MPI process",
+      :default => 1,
+      :format => '^[1-9]\d*$'},
     "omp_threads" => {
-      description: "OMP threads",
-      default: 1,
-      format: '^[1-9]\d*$'},
+      :description => "OMP threads",
+      :default => 1,
+      :format => '^[1-9]\d*$'},
     "p1" => {
-      description: "param1",
-      default: "abc",
-      format: ''}
+      :description => "param1",
+      :default => "abc",
+      :format => ''}
   }
 
   def validate_parameters(parameters)
@@ -132,7 +132,7 @@ work_dir:<%= _work_dir %>
   end
 
   def status(job_id)
-    return {status: :running}
+    return {:status => :running}
   end
 
   def all_status

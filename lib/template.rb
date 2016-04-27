@@ -7,6 +7,7 @@ module Xsub
     class Namespace
 
       def initialize(hash)
+        singleton_class = class << self; self; end
         hash.each do |key,val|
           singleton_class.send(:define_method, key) { val }
         end

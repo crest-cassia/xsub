@@ -1,4 +1,4 @@
-require_relative '../scheduler'
+require File.join( File.dirname(__FILE__), '../scheduler')
 
 module Xsub
 
@@ -24,11 +24,11 @@ LANG=C
 EOS
 
     PARAMETERS = {
-      "mpi_procs" => { description: "MPI process", default: 1, format: '^[1-9]\d*$'},
-      "omp_threads" => { description: "OMP threads", default: 1, format: '^[1-9]\d*$'},
-      "elapse" => { description: "Limit on elapsed time", default: "1:00:00", format: '^\d+:\d{2}:\d{2}$'},
-      "node" => { description: "Nodes", default: "1", format: '^\d+(x\d+){0,2}$'},
-      "shape" => { description: "Shape", default: "1", format: '^\d+(x\d+){0,2}$'}
+      "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
+      "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
+      "elapse" => { :description => "Limit on elapsed time", :default => "1:00:00", :format => '^\d+:\d{2}:\d{2}$'},
+      "node" => { :description => "Nodes", :default => "1", :format => '^\d+(x\d+){0,2}$'},
+      "shape" => { :description => "Shape", :default => "1", :format => '^\d+(x\d+){0,2}$'}
     }
 
     def validate_parameters(prm)
@@ -82,7 +82,7 @@ EOS
           raise "unknown format"
         end
       end
-      {job_id: job_id, raw_output: output.lines.map(&:chomp).to_a }
+      {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def status(job_id)
@@ -102,7 +102,7 @@ EOS
       else
         status = :finished
       end
-      { status: status, raw_output: output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
     def all_status

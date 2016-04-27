@@ -1,4 +1,4 @@
-require_relative '../support/shared_examples_for_scheduler'
+require File.join( File.dirname(__FILE__), '../support/shared_examples_for_scheduler')
 
 RSpec.describe Xsub::SR16000 do
 
@@ -19,21 +19,21 @@ RSpec.describe Xsub::SR16000 do
 
   submit_test_ok_cases = [
     {
-      command: "cd #{Dir.pwd}/work_test && llsubmit #{Dir.pwd}/job.sh",
-      out: <<EOS,
+      :command => "cd #{Dir.pwd}/work_test && llsubmit #{Dir.pwd}/job.sh",
+      :out => <<EOS,
 KBGT60003-I Budget function authenticated bu0701. bu0701 is not assigned account number.
 llsubmit: The job "htcf02c01p02.134491" has been submitted.
 EOS
-      rc: 0,
-      job_id: "htcf02c01p02.134491"
+      :rc => 0,
+      :job_id => "htcf02c01p02.134491"
     }
   ]
   submit_test_ng_cases = [
     {
-      command: nil,
-      out: nil,
-      rc: 1,
-      error: /rc is not zero/
+      :command => nil,
+      :out => nil,
+      :rc => 1,
+      :error => /rc is not zero/
     }
   ]
 
@@ -42,38 +42,38 @@ EOS
 
   status_test_cases = [
     {
-      job_id: "htcf02c01p02.134491",
-      command: "llq htcf02c01p02.134491",
-      out: <<EOS,
+      :job_id => "htcf02c01p02.134491",
+      :command => "llq htcf02c01p02.134491",
+      :out => <<EOS,
 Id                       Owner      Submitted   ST PRI Class        Running On 
 ------------------------ ---------- ----------- -- --- ------------ -----------
 htcf02c01p02.134491.0    bu0701      8/15 14:37 I  50  c                       
 
 1 job step(s) in query, 1 waiting, 0 pending, 0 running, 0 held, 0 preempted
 EOS
-      rc: 0,
-      status: :queued
+      :rc => 0,
+      :status => :queued
     },
     {
-      job_id: "htcf02c01p02.134491",
-      command: "llq htcf02c01p02.134491",
-      out: <<EOS,
+      :job_id => "htcf02c01p02.134491",
+      :command => "llq htcf02c01p02.134491",
+      :out => <<EOS,
 Id                       Owner      Submitted   ST PRI Class        Running On 
 ------------------------ ---------- ----------- -- --- ------------ -----------
 htcf02c01p02.134491.0    bu0701      8/15 14:37 R  50  c                       
 
 1 job step(s) in query, 0 waiting, 0 pending, 1 running, 0 held, 0 preempted
 EOS
-      rc: 0,
-      status: :running
+      :rc => 0,
+      :status => :running
     },
     {
-      job_id: "htcf02c01p02.134491",
-      command: "llq htcf02c01p02.134491",
-      out: <<EOS,
+      :job_id => "htcf02c01p02.134491",
+      :command => "llq htcf02c01p02.134491",
+      :out => <<EOS,
 EOS
-      rc: 153,
-      status: :finished
+      :rc => 153,
+      :status => :finished
     }
   ]
 
