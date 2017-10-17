@@ -17,7 +17,7 @@ EOS
       "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
       "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
       "ppn" => { :description => "Process per nodes", :default => 1, :format => '^[1-9]\d*$'},
-      "walltime" => { :description => "Limit on elapsed time", :default => "1:00:00", :format => '^\d+:\d{2}:\d{2}$'}
+      "walltime" => { :description => "Limit on elapsed time", :default => "24:00:00", :format => '^\d+:\d{2}:\d{2}$'}
     }
 
     def validate_parameters(prm)
