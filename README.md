@@ -13,7 +13,7 @@ Although only a few types of schedulers are currently supported, you can send an
 
 ## Installation
 
-- Install Ruby 1.9.3 or later.
+- Install Ruby 2.0.0 or later.
   - If Ruby is already installed in your system, you do not have to worry about it. Try `ruby --version` to check the version of Ruby.
   - If Ruby is not installed on your system, we recommend using [rbenv](https://github.com/sstephenson/rbenv) to install Ruby.
 
