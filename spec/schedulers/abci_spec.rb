@@ -9,24 +9,22 @@ RSpec.describe Xsub::Abci do
     {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 8}
   ]
   invalid_params = [
-    [
-      {"mpi_procs" => 4, "omp_threads" => 8, "ppn" => 6},
-      /must be a multiple of ppn/
-    ]
   ]
 
   it_behaves_like "Scheduler#validate_parameters", valid_params, invalid_params
 
   submit_test_ok_cases = [
     {
-      :command => "qsub #{Dir.pwd}/job.sh -d #{Dir.pwd}/work_test -o #{Dir.pwd}/log_test -e #{Dir.pwd}/log_test",
-      :out => "19352.localhost",
+      :parameters => {"group" => "g1234", "name_job" => "my_job", "resource_type_num" => "rt_F=1"},
+      :command => "cd #{Dir.pwd}/work_test && qsub -g g1234 -o #{Dir.pwd}/log_test/execute.log -e #{Dir.pwd}/log_test/error.log #{Dir.pwd}/job.sh",
+      :out => "job submitted 19352",
       :rc => 0,
-      :job_id => "19352"
+      :job_id => "19352",
     }
   ]
   submit_test_ng_cases = [
     {
+      :parameters => {"group" => "g1234", "name_job" => "my_job", "resource_type_num" => "rt_F=1"},
       :command => nil,
       :out => nil,
       :rc => 1,
@@ -36,44 +34,37 @@ RSpec.describe Xsub::Abci do
 
   it_behaves_like "Scheduler#submit_job", submit_test_ok_cases, submit_test_ng_cases
 
-
-    status_test_cases = [
+  status_test_cases = [
     {
       :job_id => "19352",
-      :command => "qstat 19352",
+      :command => "qstat | grep 19352",
       :out => <<EOS,
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 Q batch
+19352.localhost           job.sh           test_user              0 qw batch
 EOS
       :rc => 0,
       :status => :queued
     },
     {
       :job_id => "19352",
-      :command => "qstat 19352",
+      :command => "qstat | grep 19352",
       :out => <<EOS,
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 R batch
+19352.localhost           job.sh           test_user              0 r batch
 EOS
       :rc => 0,
       :status => :running
     },
     {
       :job_id => "19352",
-      :command => "qstat 19352",
+      :command => "qstat | grep 19352",
       :out => <<EOS,
-Job id                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           job.sh           test_user              0 C batch
+19352.localhost           job.sh           test_user              0 hqw batch
 EOS
       :rc => 0,
-      :status => :finished
+      :status => :queued
     },
     {
       :job_id => "19352",
-      :command => "qstat 19352",
+      :command => "qstat | grep 19352",
       :out => <<EOS,
 EOS
       :rc => 153,
@@ -81,20 +72,18 @@ EOS
     },
     {
       :job_id => "19352",
-      :command => "qstat 19352",
+      :command => "qstat | grep 19352",
       :out => <<EOS,
-Job ID                    Name             User            Time Use S Queue
-------------------------- ---------------- --------------- -------- - -----
-19352.localhost           ...b0000_xsub.sh test_user       02:13:28 E batch
+19352.localhost           ...b0000_xsub.sh test_user       02:13:28 e batch
 EOS
       :rc => 0,
-      :status => :running
+      :status => :finished
     }
     ]
 
   it_behaves_like "Scheduler#status", status_test_cases
 
-  it_behaves_like "Scheduler#all_status", "qstat && pbsnodes -a"
+  it_behaves_like "Scheduler#all_status", "qstat -g c"
 
   it_behaves_like "Scheduler#delete", "qdel"
 end

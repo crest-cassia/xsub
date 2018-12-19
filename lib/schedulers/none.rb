@@ -16,7 +16,7 @@ EOS
     def validate_parameters(params)
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
       full_path = File.expand_path(script_path)
       cmd = "nohup bash #{full_path} > /dev/null 2>&1 < /dev/null & echo $!"
       log.puts "#{cmd} is invoked"

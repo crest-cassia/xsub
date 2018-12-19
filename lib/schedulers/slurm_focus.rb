@@ -37,7 +37,7 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
       cmd = "fjsub -o #{File.expand_path(log_dir)}/stdout.%j -e #{File.expand_path(log_dir)}/stderr.%j #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`

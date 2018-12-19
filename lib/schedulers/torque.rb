@@ -32,7 +32,7 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
       cmd = "qsub #{File.expand_path(script_path)} -d #{File.expand_path(work_dir)} -o #{File.expand_path(log_dir)} -e #{File.expand_path(log_dir)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`

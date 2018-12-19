@@ -77,7 +77,7 @@ RSpec.shared_examples "Scheduler#submit_job" do |ok_cases,ng_cases|
           `exit #{rc} > /dev/null` if rc
           out
         }
-        ret = s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
+        ret = s.submit_job("job.sh", "work_test", "log_test", StringIO.new, ok_case[:parameters])
         expect( ret[:job_id] ).to eq job_id
       end
     end
@@ -96,7 +96,7 @@ RSpec.shared_examples "Scheduler#submit_job" do |ok_cases,ng_cases|
           out
         }
         expect {
-          s.submit_job("job.sh", "work_test", "log_test", StringIO.new)
+          s.submit_job("job.sh", "work_test", "log_test", StringIO.new, ng_case[:parameters])
         }.to raise_error(error)
       end
     end

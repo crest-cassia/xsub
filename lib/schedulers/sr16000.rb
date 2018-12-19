@@ -43,7 +43,7 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
 
       cmd = "cd #{File.expand_path(work_dir)} && llsubmit #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}"

@@ -29,12 +29,10 @@ EOS
     }
     
     def validate_parameters(prm)
-# groupをsubmit_job()で参照したいため無理やり．submit_job()の前に必ず呼び出される．
-    	@@group = prm["group"];
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
-      cmd = "cd #{File.expand_path(work_dir)} && qsub -g #{@@group} -o #{File.expand_path(log_dir)}/execute.log -e #{File.expand_path(log_dir)}/error.log #{File.expand_path(script_path)}"
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
+      cmd = "cd #{File.expand_path(work_dir)} && qsub -g #{parameters["group"]} -o #{File.expand_path(log_dir)}/execute.log -e #{File.expand_path(log_dir)}/error.log #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`
       unless $?.to_i == 0
@@ -56,7 +54,7 @@ EOS
         when /r/
           :running
         when /e/
-          :failed
+          :finished
         else
           raise "unknown output: #{output}"
         end

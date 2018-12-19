@@ -127,7 +127,7 @@ work_dir:<%= _work_dir %>
   def validate_parameters(parameters)
   end
 
-  def submit_job(script_path, work_dir, log_dir, log_io)
+  def submit_job(script_path, work_dir, log_dir, log_io, parameters)
     {"job_id" => "1234"}
   end
 

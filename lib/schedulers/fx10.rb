@@ -47,7 +47,7 @@ EOS
       end
     end
 
-    def submit_job(script_path, work_dir, log_dir, log)
+    def submit_job(script_path, work_dir, log_dir, log, parameters)
       stdout_path = File.join( File.expand_path(log_dir), '%j.o.txt')
       stderr_path = File.join( File.expand_path(log_dir), '%j.e.txt')
       job_stat_path = File.join( File.expand_path(log_dir), '%j.i.txt')

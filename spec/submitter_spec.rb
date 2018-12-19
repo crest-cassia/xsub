@@ -151,7 +151,7 @@ work_dir:#{Dir.pwd}/work_test
   describe "Scheduler#submit_job" do
 
     it "calls Scheduler#submit_job" do
-      expect(@submitter.scheduler).to receive(:submit_job) {|arg,_,_,_|
+      expect(@submitter.scheduler).to receive(:submit_job) {|arg,_,_,_,_|
         expect( arg ).to eq File.expand_path("job_xsub.sh")
         {:job_id => "1234"}
       }

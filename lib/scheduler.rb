@@ -3,13 +3,13 @@ module Xsub
   class Scheduler
 
     def self.descendants
-      ObjectSpace.each_object(Class).select { |klass| klass < self }
+      ObjectSpace.each_object(Class).select { |klass| klass < self and klass.name }
     end
 
     def self.get_scheduler(scheduler_name = nil)
       scheduler_name ||= ENV['XSUB_TYPE']
       unless scheduler_name
-        candidates = descendants.map {|klass| klass.name.split('::').last }
+        candidates = descendants.map {|k| k.name.split('::').last }
         raise " XSUB_TYPE is not set: select from #{candidates.inspect}"
       end
       scheduler = descendants.find do |klass|
