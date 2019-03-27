@@ -13,7 +13,7 @@ module Xsub
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --stg-transfiles all
 #PJM --stgin "<%= _job_file %> <%= File.basename(_job_file) %>"
-#PJM --stgin-dir "<%= File.expand_path(_work_dir) %> ./<%= File.basename(_work_dir) %>"
+#PJM --stgin-dir "<%= File.expand_path(_work_dir) %> ./<%= File.basename(_work_dir) %> recursive=3"
 #PJM --stgout "./* <%= File.expand_path(File.join(_work_dir,'..')) %>/"
 #PJM --stgout "./<%= File.basename(_work_dir) %>/* <%= File.expand_path(_work_dir) %>/"
 #PJM -s
