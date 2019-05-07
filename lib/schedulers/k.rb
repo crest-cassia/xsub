@@ -108,9 +108,9 @@ EOS
       output = `#{cmd}`
       if $?.to_i == 0
         status = case output.lines.to_a.last.split[3]
-        when /ACC|QUE/
+        when /ACC|QUE|SIN/
           :queued
-        when /SIN|RDY|RNA|RUN|RNO|SOT/
+        when /RDY|RNA|RUN|RNO|SOT/
           :running
         when /EXT|CCL/
           :finished
