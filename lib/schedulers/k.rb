@@ -9,6 +9,7 @@ module Xsub
 #
 #PJM --rsc-list "node=<%= node %>"
 #PJM --rsc-list "elapse=<%= elapse %>"
+#PJM --rsc-list "rscgrp=<%= K.rscgrpname(node, elapse) %>"
 #PJM --mpi "shape=<%= shape %>"
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --stg-transfiles all
@@ -30,6 +31,23 @@ EOS
       "node" => { :description => "Nodes", :default => "1", :format => '^\d+(x\d+){0,2}$'},
       "shape" => { :description => "Shape", :default => "1", :format => '^\d+(x\d+){0,2}$'}
     }
+
+    def self.rscgrpname(node, elapse)
+      procs = node.split("x").map(&:to_i).inject(1) {|m,x| m *= x }
+      if procs <= 384
+        es = elapse.split(":").map(&:to_i)
+        es.unshift(0) while es.size < 3
+        if es[0]*3600+es[1]*60+es[2] <= 86400  # <= 24h
+          "small"
+        else
+          "long"
+        end
+      elsif procs <= 36864
+        "large"
+      else
+        "huge"
+      end
+    end
 
     def validate_parameters(prm)
       mpi = prm["mpi_procs"].to_i
