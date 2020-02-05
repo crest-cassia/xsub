@@ -54,6 +54,17 @@ List of available schedulers.
 - **slurm_focus**
   - [FOCUS supercomputer system](http://www.j-focus.or.jp/focus/)
   - `fjsub`, `fjstat`, `fjdel` commands are used.
+- **fx100nagoya**, **cx400nagoya**
+  - FX100 and CX400 in [Nagoya University](http://www.icts.nagoya-u.ac.jp/en/sc/)
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
+  - Set your `$XSUB_TYPE` as
+  ```sh:.bash_profile.local
+  if [ $(uname -n) = 'hpcifx' ]; then
+    export XSUB_TYPE=fx100nagoya
+  elif [ $(uname -n) = 'hpcicx' ]; then
+    export XSUB_TYPE=cx400nagoya
+  fi
+  ```
 
 ## Contact
 
