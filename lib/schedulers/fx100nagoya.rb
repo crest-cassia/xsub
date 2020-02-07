@@ -110,7 +110,7 @@ EOS
         else
           :finished
         end
-      { stauts: status, raw_output: output.lines.map(&:chomp) }
+      { status: status, raw_output: output.lines.map(&:chomp) }
     end
 
     def all_status
