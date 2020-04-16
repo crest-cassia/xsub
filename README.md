@@ -65,6 +65,9 @@ List of available schedulers.
     export XSUB_TYPE=cx400nagoya
   fi
   ```
+- **fugaku**
+  - Fugaku
+  - `pjsub`, `pjstat`, `pjdel` commands are used.
 
 ## Contact
 
