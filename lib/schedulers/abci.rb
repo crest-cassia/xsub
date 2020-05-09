@@ -1,4 +1,5 @@
 require 'date'
+require 'open3'
 require File.expand_path(File.dirname(__FILE__)+'/../scheduler')
 
 module Xsub
@@ -20,7 +21,8 @@ EOS
     PARAMETERS = {
       "resource_type_num" =>  { :description => "(resource_type)=(num)", :default => "rt_F=1", :format => '$'},
       "name_job" => { :description => "name of job", :default => "oacis_job", :format => '$'},
-      "group" => { :description => "user group", :default => "group_name", :format => '$'},
+#      "group" => { :description => "user group", :default => "group_name", :format => '$'},
+      "group" => { :description => "user group", :default => `groups | awk '{print $2}'`, :format => '$'},      
       "priority" => { :description => "priority", :default => 0, :format => '^[0-9]\d*$'},
       "walltime" => { :description => "Limit on elapsed time", :default => "0:01:00", :format => '^\d+:\d{2}:\d{2}$'},
       
@@ -34,11 +36,23 @@ EOS
     def submit_job(script_path, work_dir, log_dir, log, parameters)
       cmd = "cd #{File.expand_path(work_dir)} && qsub -g #{parameters["group"]} -o #{File.expand_path(log_dir)}/execute.log -e #{File.expand_path(log_dir)}/error.log #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
-      output = `#{cmd}`
-      unless $?.to_i == 0
-        log.puts "rc is not zero: #{output}"
-        raise "rc is not zero: #{output}, #{File.expand_path(work_dir)}"
+      ## [2019-12-18 I.Noda] to provide more informative error message.
+      # output = `#{cmd}`
+      #unless $?.to_i == 0
+      #  log.puts "rc is not zero: #{output}"
+      #  raise "rc is not zero: #{output}, #{File.expand_path(work_dir)}"
+      #end
+      (output, errorMsg, returnCode) = *(Open3.capture3(cmd))
+      unless returnCode.to_i == 0
+        errorInfo = ("return-code is not zero: code=#{returnCode.to_i}" + 
+                     "\n\t cmd=#{cmd.inspect}" +
+                     "\n\t output=#{output.inspect}" +
+                     "\n\t error=#{errorMsg.inspect}" +
+                     "\n\t workdir=#{File.expand_path(work_dir)}") ;
+        log.puts(errorInfo)
+        raise (errorInfo)
       end
+      
       job_id = output.lines.to_a.last.split[2]
       log.puts "job_id: #{job_id}"
       {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }

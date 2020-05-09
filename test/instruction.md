@@ -6,8 +6,8 @@ To verify xsub working properly, test the following items.
 
 - run `xsub -t`
     ```
-xsub -t
-```
+    xsub -t
+    ```
     - verify output JSON has "parameters" and "template" keys
 
 - run xsub command as follows. (change the parameters properly for each host.)
@@ -33,13 +33,14 @@ xsub -t
     ```
     - verify JSON having "status" key is printed to stdout as follows
         ```
-{
-  "status": "running",
-  "raw_output": [
-    "  PID TTY           TIME CMD",
-    "66694 ttys001    0:00.00 bash /Users/murase/work/xsub/test/sleep5_xsub2.sh"
-  ]
-    ```
+        {
+          "status": "running",
+          "raw_output": [
+            "  PID TTY           TIME CMD",
+            "66694 ttys001    0:00.00 bash /Users/murase/work/xsub/test/sleep5_xsub2.sh"
+          ]
+        }
+        ```
     - verify status is queued or running
     - after job finished, run xstat command again and verify the status changed to finished
         ```
@@ -60,9 +61,9 @@ xsub -t
 
 - run the following command. (replace the job id properly.)
     ```
-xsub sleep5.sh -d work_dir -l log_dir | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
-xdel 1234
-xstat 1234
+    xsub sleep5.sh -d work_dir -l log_dir | ruby -r json -e 'puts JSON.load($stdin.read)["job_id"]'
+    xdel 1234
+    xstat 1234
     ```
     - verify the job is deleted using stat command of the scheduler
     - to clean up,
