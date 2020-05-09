@@ -9,7 +9,6 @@ module Xsub
 #!/bin/bash -x
 #PBS -l nodes=<%= mpi_procs.to_i*omp_threads.to_i/ppn.to_i %>:ppn=<%= ppn %>
 #PBS -l walltime=<%= walltime %>
-LANG=C
 . <%= _job_file %>
 EOS
 
