@@ -39,14 +39,18 @@ EOS
       end
     end
 
-    def self.rscgrpname(_node, _elapse, covid19)
-      # num_procs = node.split('x').map(&:to_i).inject(:*)
-      # elapse_time_sec = elapse.split(':').map(&:to_i).inject(0) {|result, value| result * 60 + value}
+    def self.rscgrpname(node, elapse, covid19)
+      num_nodes = node.split('x').map(&:to_i).inject(:*)
+      elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
+      is_covid19 = covid19 == 'true'
 
-      if covid19 == 'true'
-        'covid19'
+      # 2020/5/15 13:00 -- 2020/5/18 15:00
+      if num_nodes <= 384 && elapse_time_sec <= 36000 # <= 600m
+        is_covid19 ? 'covid19s' : 'dvsmall'
+      elsif num_nodes <= 27648 && elapse_time_sec <= 36000 # <= 600m
+        is_covid19 ? 'covid19' : 'dvall'
       else
-        'dvall'
+        ''
       end
     end
 
