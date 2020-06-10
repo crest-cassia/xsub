@@ -22,7 +22,7 @@ EOS
       "resource_type_num" =>  { :description => "(resource_type)=(num)", :default => "rt_F=1", :format => '$'},
       "name_job" => { :description => "name of job", :default => "oacis_job", :format => '$'},
 #      "group" => { :description => "user group", :default => "group_name", :format => '$'},
-      "group" => { :description => "user group", :default => `groups | awk '{print $2}'`, :format => '$'},      
+      "group" => { :description => "user group", :default => `groups | awk '{printf $2}'`, :format => '$'},      
       "priority" => { :description => "priority", :default => 0, :format => '^[0-9]\d*$'},
       "walltime" => { :description => "Limit on elapsed time", :default => "0:01:00", :format => '^\d+:\d{2}:\d{2}$'},
       
