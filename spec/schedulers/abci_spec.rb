@@ -17,7 +17,7 @@ RSpec.describe Xsub::Abci do
     {
       :parameters => {"group" => "g1234", "name_job" => "my_job", "resource_type_num" => "rt_F=1"},
       :command => "cd #{Dir.pwd}/work_test && qsub -g g1234 -o #{Dir.pwd}/log_test/execute.log -e #{Dir.pwd}/log_test/error.log #{Dir.pwd}/job.sh",
-      :out => "job submitted 19352",
+      :out => "Your job 19352 (\"my_job\") has been submitted",
       :rc => 0,
       :job_id => "19352",
     }
@@ -28,7 +28,7 @@ RSpec.describe Xsub::Abci do
       :command => nil,
       :out => nil,
       :rc => 1,
-      :error => /rc is not zero/
+      :error => /return-code is not zero/
     }
   ]
 
@@ -39,7 +39,7 @@ RSpec.describe Xsub::Abci do
       :job_id => "19352",
       :command => "qstat | grep 19352",
       :out => <<EOS,
-19352.localhost           job.sh           test_user              0 qw batch
+   19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38                                                                  80
 EOS
       :rc => 0,
       :status => :queued
@@ -48,7 +48,7 @@ EOS
       :job_id => "19352",
       :command => "qstat | grep 19352",
       :out => <<EOS,
-19352.localhost           job.sh           test_user              0 r batch
+   19352 0.25586 job.sh    u1234   r     07/03/2020 20:18:38 gpu@g0118                                                        80
 EOS
       :rc => 0,
       :status => :running
@@ -57,7 +57,7 @@ EOS
       :job_id => "19352",
       :command => "qstat | grep 19352",
       :out => <<EOS,
-19352.localhost           job.sh           test_user              0 hqw batch
+   19352 0.00000 job.sh    u1234   hqw   07/03/2020 20:18:38                                                                  80
 EOS
       :rc => 0,
       :status => :queued
@@ -74,7 +74,7 @@ EOS
       :job_id => "19352",
       :command => "qstat | grep 19352",
       :out => <<EOS,
-19352.localhost           ...b0000_xsub.sh test_user       02:13:28 e batch
+   19352 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38                                                                  80
 EOS
       :rc => 0,
       :status => :finished

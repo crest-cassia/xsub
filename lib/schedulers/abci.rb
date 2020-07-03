@@ -37,17 +37,20 @@ EOS
       cmd = "cd #{File.expand_path(work_dir)} && qsub -g #{parameters["group"]} -o #{File.expand_path(log_dir)}/execute.log -e #{File.expand_path(log_dir)}/error.log #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       ## [2019-12-18 I.Noda] to provide more informative error message.
-      # output = `#{cmd}`
+      ## [2020-07-03 S.Takami] to pass testing of RSpec
+      #output = `#{cmd}`
       #unless $?.to_i == 0
       #  log.puts "rc is not zero: #{output}"
       #  raise "rc is not zero: #{output}, #{File.expand_path(work_dir)}"
       #end
-      (output, errorMsg, returnCode) = *(Open3.capture3(cmd))
+      #(output, errorMsg, returnCode) = *(Open3.capture3(cmd))
+      output = `#{cmd}`
+      returnCode = $?
       unless returnCode.to_i == 0
         errorInfo = ("return-code is not zero: code=#{returnCode.to_i}" + 
                      "\n\t cmd=#{cmd.inspect}" +
                      "\n\t output=#{output.inspect}" +
-                     "\n\t error=#{errorMsg.inspect}" +
+      #               "\n\t error=#{errorMsg.inspect}" +
                      "\n\t workdir=#{File.expand_path(work_dir)}") ;
         log.puts(errorInfo)
         raise (errorInfo)
@@ -63,12 +66,12 @@ EOS
       output = `#{cmd}`
       if $?.to_i == 0
         status = case output.lines.to_a.last.split[4]
-        when /qw|hqw/
-          :queued
-        when /r/
-          :running
-        when /e/
+        when /E/
           :finished
+        when /qw|h|s|S|T|Rq/
+          :queued
+        when /r|t|d/
+          :running
         else
           raise "unknown output: #{output}"
         end
