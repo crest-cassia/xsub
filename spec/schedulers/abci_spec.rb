@@ -37,7 +37,7 @@ RSpec.describe Xsub::Abci do
   status_test_cases = [
     {
       :job_id => "19352",
-      :command => "qstat | grep 19352",
+      :command => "qstat | grep '^ *19352'",
       :out => <<EOS,
    19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38                                                                  80
 EOS
@@ -46,7 +46,7 @@ EOS
     },
     {
       :job_id => "19352",
-      :command => "qstat | grep 19352",
+      :command => "qstat | grep '^ *19352'",
       :out => <<EOS,
    19352 0.25586 job.sh    u1234   r     07/03/2020 20:18:38 gpu@g0118                                                        80
 EOS
@@ -55,7 +55,7 @@ EOS
     },
     {
       :job_id => "19352",
-      :command => "qstat | grep 19352",
+      :command => "qstat | grep '^ *19352'",
       :out => <<EOS,
    19352 0.00000 job.sh    u1234   hqw   07/03/2020 20:18:38                                                                  80
 EOS
@@ -64,7 +64,7 @@ EOS
     },
     {
       :job_id => "19352",
-      :command => "qstat | grep 19352",
+      :command => "qstat | grep '^ *19352'",
       :out => <<EOS,
 EOS
       :rc => 153,
@@ -72,7 +72,7 @@ EOS
     },
     {
       :job_id => "19352",
-      :command => "qstat | grep 19352",
+      :command => "qstat | grep '^ *19352'",
       :out => <<EOS,
    19352 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38                                                                  80
 EOS
@@ -82,6 +82,8 @@ EOS
     ]
 
   it_behaves_like "Scheduler#status", status_test_cases
+
+  it_behaves_like "Scheduler#multiple_status", status_test_cases
 
   it_behaves_like "Scheduler#all_status", "qstat -g c"
 

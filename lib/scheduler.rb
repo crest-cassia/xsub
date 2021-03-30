@@ -18,6 +18,14 @@ module Xsub
       raise "scheduler is not found: #{scheduler_name}" unless scheduler
       scheduler
     end
+
+    def multiple_status(job_id_list)
+      results = {}
+      job_id_list.each{|job_id|
+        results[job_id] = status(job_id)
+      }
+      results
+    end
   end
 end
 
