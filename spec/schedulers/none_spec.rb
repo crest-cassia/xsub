@@ -57,7 +57,26 @@ EOS
 
   it_behaves_like "Scheduler#status", status_test_cases
 
-  it_behaves_like "Scheduler#multiple_status", status_test_cases
+  multiple_status_test_cases = [
+    {
+      :job_ids => ["53839", "53840"],
+      :commands => {
+        "ps -p 53839" => [0, <<~EOS],
+              PID TTY           TIME CMD
+            53839 ttys000    0:00.08 /usr/home/job.sh
+          EOS
+        "ps -p 53840" => [1, <<~EOS]
+          PID TTY           TIME CMD
+          EOS
+      },
+      :expected => {
+        "53839" => {:status => :running},
+        "53840" => {:status => :finished}
+      }
+    }
+  ]
+
+  it_behaves_like "Scheduler#multiple_status", multiple_status_test_cases
 
   it_behaves_like "Scheduler#all_status", "ps uxr | head -n 10"
 

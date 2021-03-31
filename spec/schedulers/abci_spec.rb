@@ -38,52 +38,69 @@ RSpec.describe Xsub::Abci do
     {
       :job_id => "19352",
       :command => "qstat | grep '^ *19352'",
-      :out => <<EOS,
-   19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38                                                                  80
-EOS
+      :out => <<~EOS,
+        19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38
+        EOS
       :rc => 0,
       :status => :queued
     },
     {
       :job_id => "19352",
       :command => "qstat | grep '^ *19352'",
-      :out => <<EOS,
-   19352 0.25586 job.sh    u1234   r     07/03/2020 20:18:38 gpu@g0118                                                        80
-EOS
+      :out => <<~EOS,
+        19352 0.25586 job.sh    u1234   r     07/03/2020 20:18:38
+        EOS
       :rc => 0,
       :status => :running
     },
     {
       :job_id => "19352",
       :command => "qstat | grep '^ *19352'",
-      :out => <<EOS,
-   19352 0.00000 job.sh    u1234   hqw   07/03/2020 20:18:38                                                                  80
-EOS
+      :out => <<~EOS,
+        19352 0.00000 job.sh    u1234   hqw   07/03/2020 20:18:38
+        EOS
       :rc => 0,
       :status => :queued
     },
     {
       :job_id => "19352",
       :command => "qstat | grep '^ *19352'",
-      :out => <<EOS,
-EOS
+      :out => <<~EOS,
+        EOS
       :rc => 153,
       :status => :finished
     },
     {
       :job_id => "19352",
       :command => "qstat | grep '^ *19352'",
-      :out => <<EOS,
-   19352 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38                                                                  80
-EOS
+      :out => <<~EOS,
+        19352 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38
+        EOS
       :rc => 0,
       :status => :finished
     }
-    ]
+  ]
 
   it_behaves_like "Scheduler#status", status_test_cases
 
-  it_behaves_like "Scheduler#multiple_status", status_test_cases
+  multiple_status_test_cases = [
+    {
+      :job_ids => ["19352", "19353", "19354"],
+      :commands => {"qstat" => [0,<<~EOS],
+        19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38
+        19353 0.25586 job.sh    u1234   r     07/03/2020 20:18:38
+        19354 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38
+        EOS
+      },
+      :expected => {
+        "19352" => {:raw_output => ["19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38"], :status => :queued},
+        "19353" => {:raw_output => ["19353 0.25586 job.sh    u1234   r     07/03/2020 20:18:38"], :status => :running},
+        "19354" => {:raw_output => ["19354 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38"], :status => :finished}
+      }
+    }
+  ]
+
+  it_behaves_like "Scheduler#multiple_status", multiple_status_test_cases
 
   it_behaves_like "Scheduler#all_status", "qstat -g c"
 

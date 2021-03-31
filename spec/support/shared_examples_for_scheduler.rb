@@ -131,19 +131,25 @@ RSpec.shared_examples "Scheduler#multiple_status" do |cases|
 
   describe "#multiple_status" do
 
-    job_id_list = []
-    expected_results = {}
-
     cases.each_with_index do |test_case,idx|
-      job_id_list << test_case[:job_id]
-      expected_results[test_case[:job_id]] = test_case[:status]
-    end
 
-    it "return multiple status" do
-      s = described_class.new
-      s.multiple_status(job_id_list).each{|k, v|
-        expect( expected_results[k] ).to eq v[:status]
-      }
+      it "returns status (#{idx+1})" do
+        rc = test_case[:rc]
+        job_ids = test_case[:job_ids]
+
+        s = described_class.new
+        test_case[:commands].each do |cmd,(rc,out)|
+          expect(s).to receive(:`) {|arg|
+            expect(arg).to eq cmd
+            `exit #{rc} > /dev/null` if rc
+            out
+          }
+        end
+        ret = s.multiple_status( test_case[:job_ids] )
+        ret.each do |job_id,h|
+          expect(h[:status]).to eq test_case[:expected][job_id][:status]
+        end
+      end
     end
   end
 end
@@ -151,7 +157,7 @@ end
 RSpec.shared_examples "Scheduler#all_status" do |expected_cmd|
 
   describe "#all_status" do
-    
+
     it "return status in string" do
       s = described_class.new
       expect(s).to receive(:`).with(expected_cmd).and_return("abc")
