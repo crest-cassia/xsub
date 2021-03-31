@@ -9,18 +9,24 @@ module Xsub
 
     def initialize(scheduler)
       @scheduler = scheduler
+      @is_multiple_mode = false
     end
 
     def run(argv)
-      OptionParser.new.parse!(argv)
+      OptionParser.new{|parser|
+        parser.on('-m', '--multiple') {|v| @is_multiple_mode = v }
+      }.parse!(argv)
 
       job_id = argv[0]
-      if job_id
-        output = @scheduler.status(job_id)
-        $stdout.print JSON.pretty_generate(output)
-      else
+      if argv.size < 1
         output = @scheduler.all_status
         $stdout.print output
+      elsif @is_multiple_mode
+        output = @scheduler.multiple_status(argv)
+        $stdout.print JSON.pretty_generate(output)
+      else
+        output = @scheduler.status(argv[0])
+        $stdout.print JSON.pretty_generate(output)
       end
     end
   end

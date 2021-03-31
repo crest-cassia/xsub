@@ -127,6 +127,27 @@ RSpec.shared_examples "Scheduler#status" do |cases|
   end
 end
 
+RSpec.shared_examples "Scheduler#multiple_status" do |cases|
+
+  describe "#multiple_status" do
+
+    job_id_list = []
+    expected_results = {}
+
+    cases.each_with_index do |test_case,idx|
+      job_id_list << test_case[:job_id]
+      expected_results[test_case[:job_id]] = test_case[:status]
+    end
+
+    it "return multiple status" do
+      s = described_class.new
+      s.multiple_status(job_id_list).each{|k, v|
+        expect( expected_results[k] ).to eq v[:status]
+      }
+    end
+  end
+end
+
 RSpec.shared_examples "Scheduler#all_status" do |expected_cmd|
 
   describe "#all_status" do

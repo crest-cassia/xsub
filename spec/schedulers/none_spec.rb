@@ -57,6 +57,8 @@ EOS
 
   it_behaves_like "Scheduler#status", status_test_cases
 
+  it_behaves_like "Scheduler#multiple_status", status_test_cases
+
   it_behaves_like "Scheduler#all_status", "ps uxr | head -n 10"
 
   describe "#delete" do

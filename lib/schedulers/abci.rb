@@ -61,11 +61,9 @@ EOS
       {:job_id => job_id, :raw_output => output.lines.map(&:chomp).to_a }
     end
 
-    def status(job_id)
-      cmd = "qstat | grep #{job_id}"
-      output = `#{cmd}`
-      if $?.to_i == 0
-        status = case output.lines.to_a.last.split[4]
+    def parse_status(status_line)
+      if status_line != nil
+        status = case status_line.split[4]
         when /E/
           :finished
         when /qw|h|s|S|T|Rq/
@@ -73,12 +71,29 @@ EOS
         when /r|t|d/
           :running
         else
-          raise "unknown output: #{output}"
+          raise "unknown output: #{status_line}"
         end
       else
         status = :finished
       end
-      { :status => status, :raw_output => output.lines.map(&:chomp).to_a }
+      { :status => status, :raw_output => status_line == nil ? nil : status_line.lines.map(&:chomp).to_a }
+    end
+
+    def status(job_id)
+      cmd = "qstat | grep '^ *#{job_id}'"
+      output = `#{cmd}`
+      parse_status(output.lines.to_a.last)
+    end
+    
+    def multiple_status(job_id_list)
+      cmd = "qstat"
+      output_list = `#{cmd}`.split(/\R/)
+
+      results = {}
+      job_id_list.each{|job_id|
+        results[job_id] = parse_status(output_list.grep(/^ *#{job_id}/).last)
+      }
+      results
     end
 
     def all_status
