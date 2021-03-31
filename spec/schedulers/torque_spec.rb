@@ -94,6 +94,27 @@ EOS
 
   it_behaves_like "Scheduler#status", status_test_cases
 
+  multiple_status_test_cases = [
+    {
+      :job_ids => ["0.master", "1.master","2.master"],
+      :commands => {
+        "qstat" => [0, <<~EOS]
+            Job ID                    Name             User            Time Use S Queue
+            ------------------------- ---------------- --------------- -------- - -----
+            0.master                   sleep.sh         batchuser              0 R batch
+            1.master                   sleep.sh         batchuser              0 Q batch
+          EOS
+      },
+      :expected => {
+        "0.master" => {:status => :running},
+        "1.master" => {:status => :queued},
+        "2.master" => {:status => :finished}
+      }
+    }
+  ]
+
+  it_behaves_like "Scheduler#multiple_status", multiple_status_test_cases
+
   it_behaves_like "Scheduler#all_status", "qstat && pbsnodes -a"
 
   it_behaves_like "Scheduler#delete", "qdel"
