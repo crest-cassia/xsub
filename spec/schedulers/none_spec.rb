@@ -37,19 +37,19 @@ RSpec.describe Xsub::None do
     {
       :job_id => "53839",
       :command => "ps -p 53839",
-      :out => <<EOS,
-  PID TTY           TIME CMD
-53839 ttys000    0:00.08 /usr/home/job.sh
-EOS
+      :out => <<~EOS,
+          PID TTY           TIME CMD
+        53839 ttys000    0:00.08 /usr/home/job.sh
+        EOS
       :rc => 0,
       :status => :running
     },
     {
       :job_id => "53839",
       :command => "ps -p 53839",
-      :out => <<EOS,
-  PID TTY           TIME CMD
-EOS
+      :out => <<~EOS,
+          PID TTY           TIME CMD
+        EOS
       :rc => 1,
       :status => :finished
     }

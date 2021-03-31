@@ -93,9 +93,22 @@ RSpec.describe Xsub::Abci do
         EOS
       },
       :expected => {
-        "19352" => {:raw_output => ["19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38"], :status => :queued},
-        "19353" => {:raw_output => ["19353 0.25586 job.sh    u1234   r     07/03/2020 20:18:38"], :status => :running},
-        "19354" => {:raw_output => ["19354 0.00000 job.sh    u1234   Eqw   07/03/2020 20:18:38"], :status => :finished}
+        "19352" => {:status => :queued},
+        "19353" => {:status => :running},
+        "19354" => {:status => :finished}
+      }
+    },
+    {
+      :job_ids => ["19352", "19353", "19354"],
+      :commands => {"qstat" => [0,<<~EOS],
+        19352 0.00000 job.sh    u1234   qw    07/03/2020 20:18:38
+        19353 0.25586 job.sh    u1234   r     07/03/2020 20:18:38
+        EOS
+      },
+      :expected => {
+        "19352" => {:status => :queued},
+        "19353" => {:status => :running},
+        "19354" => {:status => :finished}
       }
     }
   ]
