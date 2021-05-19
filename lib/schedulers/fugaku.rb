@@ -7,9 +7,8 @@ module Xsub
     TEMPLATE = <<EOS
 #!/bin/bash -x
 #
-#PJM --rsc-list "node=<%= Fugaku.nodeoption(node, allocation) %>"
-#PJM --rsc-list "rscunit=rscunit_ft01"
-#PJM --rsc-list "rscgrp=<%= Fugaku.rscgrpname(node, elapse, covid19) %>"
+#PJM --rsc-list "node=<%= node %>"
+#PJM --rsc-list "rscgrp=<%= Fugaku.rscgrpname(node, elapse, low_priority_job) %>"
 #PJM --rsc-list "elapse=<%= elapse %>"
 #PJM --mpi "shape=<%= shape %>"
 #PJM --mpi "proc=<%= mpi_procs %>"
@@ -26,31 +25,31 @@ EOS
       'omp_threads' => { description: 'OMP threads', default: 1, format: '^[1-9]\d*$' },
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
       'node' => { description: 'Nodes', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'allocation' => { description: 'Node allocation', default: '', format: '^(torus|mesh|noncont|)$' },
       'shape' => { description: 'Shape', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'covid19' => { description: 'Covid19', default: 'true', format: '^(true|false)$' }
+      'low_priority_job' => { description: 'Low priority job(s)?', default: 'false', format: '^(true|false)$' }
     }
 
-    def self.nodeoption(node, allocation)
-      if allocation.empty?
-        node
-      else
-        "#{node}:#{allocation}"
-      end
-    end
-
-    def self.rscgrpname(node, elapse, covid19)
+    def self.rscgrpname(node, elapse, low_priority_job)
       num_nodes = node.split('x').map(&:to_i).inject(:*)
       elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
-      is_covid19 = covid19 == 'true'
+      is_low_priority_job = low_priority_job == 'true'
 
-      # 2020/5/15 13:00 -- 2020/5/18 15:00
-      if num_nodes <= 384 && elapse_time_sec <= 36000 # <= 600m
-        is_covid19 ? 'covid19s' : 'dvsmall'
-      elsif num_nodes <= 27648 && elapse_time_sec <= 36000 # <= 600m
-        is_covid19 ? 'covid19' : 'dvall'
+      if is_low_priority_job
+        if num_nodes <= 384 && elapse_time_sec <= 43200 # <= 12h
+          'small-free'
+        elsif num_nodes <= 55296 && elapse_time_sec <= 43200 # <= 12h
+          'large-free'
+        else
+          ''
+        end
       else
-        ''
+        if num_nodes <= 384 && elapse_time_sec <= 259200 # <= 72h
+          'small'
+        elsif num_nodes <= 55296 && elapse_time_sec <= 86400 # <= 24h
+          'large'
+        else
+          ''
+        end
       end
     end
 
@@ -70,11 +69,8 @@ EOS
       max_num_procs = shape_values.inject(:*) * max_num_procs_per_node
       raise "mpi_procs must be less than or equal to #{max_num_procs}" unless num_procs <= max_num_procs
 
-      allocation = parameters['allocation']
-      raise 'allocation must be empty, "torus", "mesh", or "noncont"' unless ['', 'torus', 'mesh', 'noncont'].include?(allocation)
-
-      covid19 = parameters['covid19']
-      raise 'covid19 must be "true" or "false"' unless ['true', 'false'].include?(covid19)
+      low_priority_job = parameters['low_priority_job']
+      raise 'low_priority_job must be "true" or "false"' unless ['true', 'false'].include?(low_priority_job)
     end
 
     def submit_job(script_path, work_dir, log_dir, log, parameters)
@@ -100,29 +96,37 @@ EOS
       { job_id: job_id, raw_output: output.lines.map(&:chomp) }
     end
 
-    def status(job_id)
-      output = `pjstat #{job_id}`
+    def parse_status(line)
       status =
-        if $?.success?
-          last_line = output.lines.last
-          if last_line
-            case last_line.split[3]
-            when /ACC|QUE/
-              :queued
-            when /RNA|RNP|RUN|RNE|RNO|SWO|SWD|SWI|HLD/
-              :running
-            when /EXT|RJT|CCL/
-              :finished
-            else
-              :finished
-            end
+        if line
+          case line.split[3]
+          when /ACC|QUE/
+            :queued
+          when /RNA|RNP|RUN|RNE|RNO|SWO|SWD|SWI|HLD/
+            :running
+          when /EXT|RJT|CCL/
+            :finished
           else
             :finished
           end
         else
           :finished
         end
-      { status: status, raw_output: output.lines.map(&:chomp) }
+      { :status => status, :raw_output => [line] }
+    end
+
+    def status(job_id)
+      output = `pjstat #{job_id}`
+      if $?.success?
+        parse_status(output.lines.grep(/^\s*#{job_id}/).last)
+      else
+        { :status => :finished, :raw_output => output }
+      end
+    end
+
+    def multiple_status(job_id_list)
+      output_list = `pjstat`.split(/\R/)
+      job_id_list.map {|job_id| [job_id, parse_status(output_list.grep(/^s*#{job_id}/).last)]}.to_h
     end
 
     def all_status
