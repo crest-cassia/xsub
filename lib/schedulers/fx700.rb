@@ -12,6 +12,7 @@ module Xsub
 #SBATCH --ntasks-per-node=<%= mpi_procs/num_nodes %> #N node
 #SBATCH -c <%= omp_threads %>
 #SBATCH --chdir=<%= _work_dir %>
+#SBATCH --time=<%= walltime %>
 
 LANG=C
 module load PrgEnv-intel module load impi
@@ -27,7 +28,7 @@ EOS
       "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :format => "^(#{QUEUE_TYPES.join('|')})$" },
       "num_nodes" => { :description => "Number of nodes", :default => 1, :format => '^[1-9]\d*$'},
       "ppn" => { :description => "Process per node", :default => 1, :format => '^[1-9]\d*$'},
-      "walltime" => { :description => "walltime", :default => 1, :format => ''}
+      "walltime" => { :description => "walltime", :default => '01:00:00', :format => '^\d+:\d{2}:\d{2}$'}
     }
 
     def validate_parameters(prm)
