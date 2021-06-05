@@ -69,6 +69,10 @@ List of available schedulers.
   - Fugaku
   - `pjsub`, `pjstat`, `pjdel` commands are used.
 
+- **fx700**
+  - FX700 in [R-CCS](https://www.r-ccs.riken.jp/)
+  - `sbatch`, `squeue`, `scancel` commands are used.
+
 ## Contact
 
 - Send your feedback to us!
