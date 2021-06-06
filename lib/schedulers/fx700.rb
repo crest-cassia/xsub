@@ -8,8 +8,8 @@ module Xsub
     TEMPLATE = <<EOS
 #!/bin/bash
 #SBATCH -p <%= queue %>
-#SBATCH -N <%= num_nodes %>
-#SBATCH --ntasks-per-node=<%= mpi_procs/num_nodes %> #N node
+#SBATCH -N <%= num_nodes.to_i %>
+#SBATCH --ntasks-per-node=<%= mpi_procs/num_nodes.to_i %>
 #SBATCH -c <%= omp_threads %>
 #SBATCH --chdir=<%= _work_dir %>
 #SBATCH --time=<%= walltime %>
@@ -20,15 +20,14 @@ module load PrgEnv-intel module load impi
 . <%= _job_file %>
 EOS
 
-    QUEUE_TYPES = %w(fx700 cs500 apollo r340)
+    QUEUE_TYPES = %w(fx700 cs500 apollo70 r340)
 
     PARAMETERS = {
       "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
       "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
-      "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :format => "^(#{QUEUE_TYPES.join('|')})$" },
+      "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :format => "^(#{QUEUE_TYPES.join('|')})$"},
       "num_nodes" => { :description => "Number of nodes", :default => 1, :format => '^[1-9]\d*$'},
-      "ppn" => { :description => "Process per node", :default => 1, :format => '^[1-9]\d*$'},
-      "walltime" => { :description => "walltime", :default => '01:00:00', :format => '^\d+:\d{2}:\d{2}$'}
+      "walltime" => { :description => "Limit on elapsed time", :default => "1:00:00", :format => '^\d+:\d{2}:\d{2}$'}
     }
 
     def validate_parameters(prm)
@@ -41,7 +40,6 @@ EOS
     end
 
     def submit_job(script_path, work_dir, log_dir, log, parameters)
-      #cmd = "fjsub -o #{File.expand_path(log_dir)}/stdout.%j -e #{File.expand_path(log_dir)}/stderr.%j #{File.expand_path(script_path)}"
       cmd = "sbatch -o #{File.expand_path(log_dir)}/stdout.%j -e #{File.expand_path(log_dir)}/stderr.%j #{File.expand_path(script_path)}"
       log.puts "cmd: #{cmd}", "time: #{DateTime.now}"
       output = `#{cmd}`
@@ -59,7 +57,6 @@ EOS
     end
 
     def status(job_id)
-      #cmd = "fjstat #{job_id}"
       cmd = "squeue --job #{job_id}"
       output = `#{cmd}`
       unless $?.to_i == 0
@@ -89,14 +86,12 @@ EOS
     end
 
     def all_status
-      #cmd = "fjstat && squeues"
       cmd = "squeue"
       output = `#{cmd}`
       output
     end
 
     def delete(job_id)
-      #cmd = "fjdel #{job_id}"
       cmd = "scancel #{job_id}"
       output = `#{cmd}`
       raise "failed to delete job: #{job_id}" unless $?.to_i == 0
