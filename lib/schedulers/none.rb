@@ -44,12 +44,25 @@ EOS
       output
     end
 
+    def list_related_pids(pid)
+      pid_list = []
+      system("kill -0 #{pid}")
+      if $?.to_i == 0 then
+        p "ps --ppid #{pid} -o \"pid=\""
+        `ps --ppid #{pid} -o "pid="`.lines.each { |p|
+          pid_list.concat(list_related_pids(p.strip))
+        }
+        pid_list << pid.to_i
+      end
+      pid_list
+    end
+
     def delete(job_id)
-      pgid = `ps -p #{job_id} -o "pgid"`.lines.to_a.last.to_i.to_s
-      if $?.to_i == 0
-        cmd = "kill -TERM -#{pgid}"
+      pid_list = list_related_pids job_id
+      if pid_list.length > 0
+        pids = pid_list.join(' ')
+        cmd = "kill -KILL #{pids}"
         system(cmd)
-        raise "kill command failed: #{cmd}" unless $?.to_i == 0
         output = "process is killed"
       else
         raise "Process is not found"

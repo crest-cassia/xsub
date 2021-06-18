@@ -85,11 +85,17 @@ RSpec.describe Xsub::None do
     it "cancels job by kill command" do
       s = described_class.new
       `exit 0 > /dev/null`  # setting $? to 0
-      expect(s).to receive(:`).with("ps -p 1234 -o \"pgid\"").and_return("5678")
-      expect(s).to receive(:system).with("kill -TERM -5678")
+      expect(s).to receive(:system).with("kill -0 1234") { `exit 0 > /dev/null` }
+      expect(s).to receive(:`).with("ps --ppid 1234 -o \"pid=\"").and_return("5678")
+      expect(s).to receive(:system).with("kill -0 5678") { `exit 0 > /dev/null` }
+      expect(s).to receive(:`).with("ps --ppid 5678 -o \"pid=\"").and_return("9012")
+      expect(s).to receive(:system).with("kill -0 9012") { `exit 0 > /dev/null` }
+      expect(s).to receive(:`).with("ps --ppid 9012 -o \"pid=\"").and_return("")
+      expect(s).to receive(:system).with("kill -KILL 9012 5678 1234")
       s.delete("1234")
     end
 
+=begin
     it "raises an error when kill command fails" do
       s = described_class.new
       `exit 0 > /dev/null`  # setting $? to 0
@@ -99,11 +105,12 @@ RSpec.describe Xsub::None do
         s.delete("1234")
       }.to raise_error(/kill command failed/)
     end
+=end
     
     it "raises an error when process is not found" do
       s = described_class.new
       `exit 0 > /dev/null`  # setting $? to 0
-      expect(s).to receive(:`).with("ps -p 1234 -o \"pgid\"") { `exit 1 > /dev/null` }
+      expect(s).to receive(:system).with("kill -0 1234") { `exit 1 > /dev/null` }
       expect {
         s.delete("1234")
       }.to raise_error(/Process is not found/)
