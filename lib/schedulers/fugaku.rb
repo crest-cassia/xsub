@@ -14,9 +14,8 @@ module Xsub
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --mpi "max-proc-per-node=<%= max_mpi_procs_per_node %>"
 #PJM -s
-cd ./<%= File.basename(_work_dir) %>
-LANG=C
-. <%= File.join('..', File.basename(_job_file)) %>
+
+. <%= _job_file %>
 EOS
 
     PARAMETERS = {
