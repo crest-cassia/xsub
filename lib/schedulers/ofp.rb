@@ -10,7 +10,7 @@ module Xsub
 #PJM -L "node=<%= node %>"
 #PJM -L "rscgrp=<%= Ofp.rscgrpname(node, elapse, low_priority_job) %>"
 #PJM -L "elapse=<%= elapse %>"
-#PJM -g gp43
+#PJM -g "<%= Ofp.group%>"
 #PJM --mpi "proc=<%= mpi_procs %>"
 #PJM --mpi "max-proc-per-node=<%= max_mpi_procs_per_node %>"
 #PJM -s
@@ -31,7 +31,7 @@ EOS
     def self.rscgrpname(node, elapse, low_priority_job)
 #      num_nodes = node.split('x').map(&:to_i).inject(:*)
 #      elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
-# 
+#
 #
 #      if num_nodes <= 384 && elapse_time_sec <= 259200 # <= 72h
 #        'small'
@@ -41,6 +41,19 @@ EOS
 #        ''
 #      end
        'regular-flat' ## For now let's just put regular flat for every job
+    end
+
+    def self.group
+      # On OFP, it is necessary to specify the "group" to which the user submitting the job belongs to
+      # This is done using the environment variable "GROUP". export this variable in .bash_profile.
+      # If your group is "gp43", your bash_profile should look something like this:
+      ## # XSUB setup
+      ## export XSUB_TYPE="ofp"
+      ## export GROUP="gp43"
+      ## PATH=$PATH:$HOME/.local/bin:$HOME/bin:$HOME/xsub/bin
+      ## export PATH
+
+      ENV['GROUP']
     end
 
     def validate_parameters(parameters)
@@ -114,13 +127,16 @@ EOS
       end
     end
 
-    def multiple_status(job_id_list)
-      output_list = `pjstat`.split(/\R/)
-      job_id_list.map {|job_id| [job_id, parse_status(output_list.grep(/^s*#{job_id}/).last)]}.to_h
-    end
-
+#    def multiple_status(job_id_list)
+#      output_list = `pjstat`.split(/\R/)
+#      job_id_list.map {|job_id| [job_id, parse_status(output_list.grep(/^s*#{job_id}/).last)]}.to_h
+#    end
+#
     def all_status
-      `pjstat --with-summary`
+      # `pjstat --with-summary` The --with-summary option does not exist on OFP
+      cmd = "pjstat"
+      output = `#{cmd}`
+      output
     end
 
     def delete(job_id)
