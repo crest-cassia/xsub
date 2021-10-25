@@ -102,13 +102,11 @@ EOS
     def parse_status(line)
       status =
         if line
-          case line.split[3]
-          when /ACC|QUE/
+          case line.split[2]
+          when /QUEUED/
             :queued
-          when /RNA|RNP|RUN|RNE|RNO|SWO|SWD|SWI|HLD/
+          when /RUNNING/
             :running
-          when /EXT|RJT|CCL/
-            :finished
           else
             :finished
           end
@@ -127,10 +125,10 @@ EOS
       end
     end
 
-    def multiple_status(job_id_list)
-      output_list = `pjstat`.split(/\R/)
-      job_id_list.map {|job_id| [job_id, parse_status(output_list.grep(/^s*#{job_id}/).last)]}.to_h
-    end
+#    def multiple_status(job_id_list)
+#      output_list = `pjstat`.split(/\R/)
+#      job_id_list.map {|job_id| [job_id, parse_status(output_list.grep(/^s*#{job_id}/).last)]}.to_h
+#    end
 
     def all_status
       `pjstat`
