@@ -8,7 +8,7 @@ module Xsub
 #!/bin/bash -x
 #
 #PJM -L "node=<%= node %>"
-#PJM -L "rscgrp=<%= Ofp.rscgrpname(node, elapse, low_priority_job) %>"
+#PJM -L "rscgrp=<%= Ofp.rscgrpname(node, elapse, memory_config) %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -g "<%= Ofp.group%>"
 #PJM --mpi "proc=<%= mpi_procs %>"
@@ -24,23 +24,25 @@ EOS
       'omp_threads' => { description: 'OMP threads', default: 1, format: '^[1-9]\d*$' },
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
       'node' => { description: 'Nodes', default: '1', format: '^\d+(x\d+){0,2}$' },
-#      'shape' => { description: 'Shape', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'low_priority_job' => { description: 'Low priority job(s)?', default: 'false', format: '^(true|false)$' }
+      'memory_config' => { description: 'Use MCDRAM as cache?', default: 'flat', format: '^(flat|cache)$' }
     }
 
-    def self.rscgrpname(node, elapse, low_priority_job)
-#      num_nodes = node.split('x').map(&:to_i).inject(:*)
-#      elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
-#
-#
-#      if num_nodes <= 384 && elapse_time_sec <= 259200 # <= 72h
-#        'small'
-#      elsif num_nodes <= 55296 && elapse_time_sec <= 86400 # <= 24h
-#        'large'
-#      else
-#        ''
-#      end
-       'regular-flat' ## For now let's just put regular flat for every job
+    def self.rscgrpname(node, elapse, memory_config)
+      num_nodes = node.to_i
+      elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
+      if memory_config == 'flat'
+        if num_nodes <= 128 && elapse_time_sec <= 1800 # (1/2 hour)
+          'debug-flat'
+        else
+          'regular-flat'
+        end
+      else
+        if num_nodes <= 128 && elapse_time_sec <= 1800 # (1/2 hour)
+          'debug-cache'
+        else
+          'regular-cache'
+        end
+      end
     end
 
     def self.group
@@ -49,7 +51,7 @@ EOS
       # If your group is "gp43", your bash_profile should look something like this:
       ## # XSUB setup
       ## export XSUB_TYPE="ofp"
-      ## export GROUP="gp43"
+      ## export GROUP="myGroup"
       ## PATH=$PATH:$HOME/.local/bin:$HOME/bin:$HOME/xsub/bin
       ## export PATH
 
