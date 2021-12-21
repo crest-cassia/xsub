@@ -73,6 +73,17 @@ List of available schedulers.
   - FX700 in [R-CCS](https://www.r-ccs.riken.jp/)
   - `sbatch`, `squeue`, `scancel` commands are used.
 
+- **OakForest-PACS (OFP)**
+  - OacForest-PACS in the Univ. of Tokyo
+  - Set `GROUP` environment variable as in
+  ```sh:.bash_profile.local
+  # XSUB setup for OakForest-PACS
+  export XSUB_TYPE="ofp"
+  export GROUP="myGroup"
+  export PATH=$PATH:$HOME/xsub/bin
+  ```
+
+
 ## Contact
 
 - Send your feedback to us!
