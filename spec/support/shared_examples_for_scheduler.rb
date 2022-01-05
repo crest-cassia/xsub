@@ -1,4 +1,5 @@
 require 'stringio'
+require 'open3'
 
 RSpec.shared_examples "Scheduler::CONSTANTS" do
 
@@ -70,13 +71,20 @@ RSpec.shared_examples "Scheduler#submit_job" do |ok_cases,ng_cases|
         s = described_class.new
         cmd = ok_case[:command]
         out = ok_case[:out]
+        error = ok_case[:error]
         rc = ok_case[:rc]
         job_id = ok_case[:job_id]
-        expect(s).to receive(:`) {|arg|
+        allow(s).to receive(:`) {|arg|
           expect(arg).to eq cmd if cmd
           `exit #{rc} > /dev/null` if rc
           out
         }
+        allow(::Open3).to receive(:capture3) {|arg|
+          expect(arg).to eq cmd if cmd
+          Open3.pipeline("exit #{rc} > /dev/null") if rc
+          [out, error.inspect, rc]
+        }
+
         ret = s.submit_job("job.sh", "work_test", "log_test", StringIO.new, ok_case[:parameters])
         expect( ret[:job_id] ).to eq job_id
       end
@@ -90,10 +98,15 @@ RSpec.shared_examples "Scheduler#submit_job" do |ok_cases,ng_cases|
         out = ng_case[:out]
         rc = ng_case[:rc]
         error = ng_case[:error]
-        expect(s).to receive(:`) {|arg|
+        allow(s).to receive(:`) {|arg|
           expect(arg).to eq cmd if cmd
           `exit #{rc} > /dev/null` if rc
           out
+        }
+        allow(::Open3).to receive(:capture3) {|arg|
+          expect(arg).to eq cmd if cmd
+          Open3.pipeline("exit #{rc} > /dev/null") if rc
+          [out, error.inspect, rc]
         }
         expect {
           s.submit_job("job.sh", "work_test", "log_test", StringIO.new, ng_case[:parameters])
