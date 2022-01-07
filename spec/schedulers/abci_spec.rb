@@ -28,7 +28,7 @@ RSpec.describe Xsub::Abci do
       :command => nil,
       :out => nil,
       :rc => 1,
-      :error => /return-code is not zero/
+      :error => /^return-code is not zero/
     }
   ]
 
