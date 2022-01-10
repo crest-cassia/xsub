@@ -3,7 +3,7 @@ module Xsub
   class OutputHelper
 
     def self.run
-      is_json_mode = (ENV['XSUB_JSON'] == '0')
+      is_json_mode = (ENV['XSUB_FORCE_JSON'] == '1')
       is_success = true
 
       if is_json_mode then
