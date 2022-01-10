@@ -2,7 +2,9 @@
 
 Dir[File.join( File.dirname(__FILE__), "../lib/**/*.rb" )].each {|f| require f}
 
-scheduler = Xsub::Scheduler.get_scheduler.new
-s = Xsub::Checker.new(scheduler)
-s.run(ARGV)
+Xsub::OutputHelper.run {
+  scheduler = Xsub::Scheduler.get_scheduler.new
+  s = Xsub::Checker.new(scheduler)
+  s.run(ARGV)
+}
 
