@@ -189,15 +189,19 @@ xsub job.sh -d work_dir -l log_dir -p '{"mpi_procs":3,"omp_threads":4,"ppn":4,"e
 
 show a status of a job
 
-- **usage**: `xstat {job_id}` or `xstat`
+- **usage**: `xstat {job_id}` or `xstat` or `xstat -m {job_id1} {job_id2} ...`
   - when "job_id" is given, show the status of the job
   - when "job_id" is not given, show current the status of the scheduler
+- **options**:
+  - "-m" : set multiple mode
+    - get the status of multiple jobs at once. Output format is different from the normal mode.
 
 - **output format**:
   - when "job_id" is given, it prints JSON as follows.
   ```json
   {
     "status": "running",
+    "raw_output": []
   }
   ```
     - status field takes either "queued", "running", or "finished".
@@ -206,6 +210,18 @@ show a status of a job
       - "finished" means the job is finished or the job is not found.
 - when job_id is not given, it prints the status of all jobs.
     - output format is not defined. It usually prints the output of `qstat` command.
+- when multiple job_ids are given together with `-m` option, it prints JSON as follows.
+  ```json
+  {
+  "job1": {
+    "status": "finished",
+    "raw_output": []
+  },
+  "job2": {
+    "status": "finished",
+    "raw_output": []
+  }
+  ```
 
 - **example**
 
