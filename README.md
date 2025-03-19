@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/crest-cassia/xsub.svg?branch=master)](https://travis-ci.org/crest-cassia/xsub)
-[![Coverage Status](https://coveralls.io/repos/crest-cassia/xsub/badge.svg?branch=master&service=github)](https://coveralls.io/github/crest-cassia/xsub?branch=master)
+[![Build Status](https://github.com/crest-cassia/xsub/actions/workflows/ci.yml/badge.svg)](https://github.com/crest-cassia/xsub/actions/workflows/ci.yml)
 
 # xsub
 
