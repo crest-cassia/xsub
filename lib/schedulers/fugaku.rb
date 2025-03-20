@@ -25,7 +25,7 @@ EOS
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
       'node' => { description: 'Nodes', default: '1', format: '^\d+(x\d+){0,2}$' },
       'shape' => { description: 'Shape', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'low_priority_job' => { description: 'Low priority job(s)?', default: 'false', format: '^(true|false)$' }
+      'low_priority_job' => { description: 'Low priority job(s)?', default: 'false', options: ["true", "false"] }
     }
 
     def self.rscgrpname(node, elapse, low_priority_job)

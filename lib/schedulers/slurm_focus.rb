@@ -24,7 +24,7 @@ EOS
     PARAMETERS = {
       "mpi_procs" => { :description => "MPI process", :default => 1, :format => '^[1-9]\d*$'},
       "omp_threads" => { :description => "OMP threads", :default => 1, :format => '^[1-9]\d*$'},
-      "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :format => "^(#{QUEUE_TYPES.join('|')})$" },
+      "queue" => { :description => "Job queue", :default => QUEUE_TYPES.first, :options => QUEUE_TYPES },
       "num_nodes" => { :description => "Number of nodes", :default => 1, :format => '^[1-9]\d*$'}
     }
 

@@ -15,8 +15,20 @@ RSpec.shared_examples "Scheduler::CONSTANTS" do
     params = described_class::PARAMETERS
     params.each_pair do |key,val|
       expect( key ).to match(/^[a-z][a-zA-Z_\d]*$/)
-      expect( val.keys ).to match_array [:description, :default, :format]
-      expect( val[:format] ).to be_a(String)
+      expect( val.has_key?(:default) ).to be_truthy
+      if val[:description]
+        expect( val[:description] ).to be_a(String)
+      end
+      if val[:format]
+        expect( val[:format] ).to be_a(String)
+      end
+      if val[:options]
+        expect( val[:options] ).to be_a(Array)
+        val[:options].each do |opt|
+          expect( opt ).to be_a(String)
+        end
+        expect( val.has_key?(:format) ).to be_falsey
+      end
     end
   end
 end
