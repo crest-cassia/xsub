@@ -80,8 +80,11 @@ module Xsub
       end
 
       param_def.each do |key,definition|
-        unless @parameters[key].to_s =~ Regexp.new(definition[:format])
+        if definition[:format] and @parameters[key].to_s !~ Regexp.new(definition[:format])
           raise "invalid parameter format: #{key} #{@parameters[key]} #{definition[:format]}"
+        end
+        if definition[:options].is_a?(Array) and !definition[:options].include?(@parameters[key])
+          raise "invalid parameter value: #{key} #{@parameters[key]} #{definition[:options]}"
         end
       end
     end

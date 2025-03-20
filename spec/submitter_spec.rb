@@ -102,6 +102,58 @@ RSpec.describe Xsub::Submitter do
         @submitter.run(argv)
       }.to raise_error(/invalid parameter format/)
     end
+
+    it "checks the format using regular expression" do
+      dummy = Dummy.clone
+      dummy.const_set(:PARAMETERS, {
+        "mpi_procs" => {format: '^[1-9]\d*$', default: 1},
+        "omp_threads" => {format: '^[1-9]\d*$', default: 1},
+        "p1" => {format: '^[a-z]+$', default:'abc'}
+      })
+      @submitter = Xsub::Submitter.new( dummy.new )
+      argv = %w(-p {"p1":"foobar"} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to_not raise_error
+
+      argv = %w(-p {"p1":"FOOBAR"} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to raise_error(/invalid parameter format/)
+    end
+
+    it "skips format check when format is not given" do
+      dummy = Dummy.clone
+      dummy.const_set(:PARAMETERS, {
+        "mpi_procs" => {format: '^[1-9]\d*$', default: 1},
+        "omp_threads" => {format: '^[1-9]\d*$', default: 1},
+        "p1" => {default:'abc'}
+      })
+      @submitter = Xsub::Submitter.new( dummy.new )
+      argv = %w(-p {"p1":"foobar1234ABC"} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to_not raise_error
+    end
+
+    it "raises an error when value is not included in options" do
+      dummy = Dummy.clone
+      dummy.const_set(:PARAMETERS, {
+        "mpi_procs" => {format: '^[1-9]\d*$', default: 1},
+        "omp_threads" => {format: '^[1-9]\d*$', default: 1},
+        "p1" => {options: %w(foo bar baz), default: 'foo'}
+      })
+      @submitter = Xsub::Submitter.new( dummy.new )
+      argv = %w(-p {"p1":"baz"} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to_not raise_error
+
+      argv = %w(-p {"p1":"foobar"} job.sh)
+      expect {
+        @submitter.run(argv)
+      }.to raise_error(/invalid parameter value/)
+    end
   end
 
   describe "Scheduler#validate_parameters" do
