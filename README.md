@@ -8,13 +8,13 @@ Users have to change their scripts to conform with its dialect.
 This is a wrapper script to absorb the difference.
 This script is intended to be used by [OACIS](https://github.com/crest-cassia/oacis).
 
-Although only a few types of schedulers are currently supported, you can send an enhance request to us or you can just extend it by yourself.
+Although only a few types of schedulers are currently supported, you can extend it by yourself.
+
+In case you are not familiar with Ruby, try a Python implementation of xsub, [xsub_py](https://github.com/crest-cassia/xsub_py).
 
 ## Installation
 
 - Install Ruby 2.0.0 or later.
-  - If Ruby is already installed in your system, you do not have to worry about it. Try `ruby --version` to check the version of Ruby.
-  - If Ruby is not installed on your system, we recommend using [rbenv](https://github.com/sstephenson/rbenv) to install Ruby.
 
 - Clone this repository
 
@@ -93,7 +93,7 @@ List of available schedulers.
 
 The MIT License (MIT)
 
-Copyright (c) 2014,2015 RIKEN, AICS
+Copyright (c) 2014,2015 RIKEN AICS, 2025 RIKEN R-CCS
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -138,9 +138,11 @@ submit a job to a scheduler
 - **output format**:
   - when "-t" option is given, it prints JSON as follows.
     - it must have a "parameters" field.
-    - Each parameter has "description", "default", and "format" fields.
-      - "description" and/or "format" fields can be an empty string.
-      - format is given as a regular expression. If the given parameter does not match the format, xsub fails.
+    - Each parameter has "description", "default", "format", and "options" fields.
+      - "description", "format", and "options" fields are optional.
+      - "format" is given as a regular expression. If the given parameter does not match the format, xsub fails.
+      - "options" is an array of possible values. When "options" is given, "format" is ignored. "default" must be one of the "options".
+        - When "options" is given, a selection box is shown in OACIS since version 3.11.0.
 
   ```json
   {
@@ -164,6 +166,11 @@ submit a job to a scheduler
         "description": "Limit on elapsed time",
         "default": "1:00:00",
         "format": "^\\d+:\\d{2}:\\d{2}$"
+      },
+      "queue": {
+        "description": "Queue name",
+        "default": "default",
+        "options": ["default", "debug"]
       }
     }
   }
@@ -240,8 +247,7 @@ delete a job
 
 ## Extending
 
-- If you are not familiar with Ruby, just send us an email.
-- If you are familiar with Ruby, you can extend xsub by yourself.
+- To extend xsub by yourself, follow the instructions below.
   - Fork the repository.
   - Add another class which inherits `Xsub::Scheduler` class.
     - Define the same methods and constants as the existing classes.
@@ -250,10 +256,11 @@ delete a job
     - After you implemented your scheduler class, test following the instructions [here](test/instruction.md).
   - set `XSUB_TYPE` environment variable to your new class name.
     - For example, if your class name is `MyScheduler`, then write `XSUB_TYPE=MyScheduler` to your `.bash_profile`. (case-insensitive)
-
-- We would appreciate it if you send us your enhancement as a pull request.
+- In case you are not familiar with Ruby, consider using the Python version of xsub, [xsub_py](https://github.com/crest-cassia/xsub_py).
 
 ### Sending pull request
+
+- We would appreciate it if you send us your enhancement as a pull request.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
