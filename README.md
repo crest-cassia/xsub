@@ -30,7 +30,7 @@ In case you are not familiar with Ruby, try a Python implementation of xsub, [xs
 
   ```sh:.bash_profile
   export PATH="$HOME/xsub/bin:$PATH"
-  export XSUB_TYPE="torque"
+  export XSUB_TYPE="none"
   ```
 
 ### Supported Schedulers
