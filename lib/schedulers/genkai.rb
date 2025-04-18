@@ -9,7 +9,7 @@ module Xsub
 #
 #PJM -L "rscgrp=a-pj24003114"
 #PJM -L "vnode-core=1"
-#PJM -L "elapse=00:05:00"
+#PJM -L "elapse=<%= elapse %>"
 #PJM -j
 #PJM -S
 
