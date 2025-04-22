@@ -7,7 +7,7 @@ module Xsub
     TEMPLATE = <<EOS
 #!/bin/bash -x
 #
-#PJM -L "rscgrp=a-pj24003114"
+#PJM -L "rscgrp=<%= rscgrp %>"
 #PJM -L "vnode-core=<%= vnode-core %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -j
@@ -19,51 +19,10 @@ EOS
     PARAMETERS = {
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
       'vnode-core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^\d+(x\d+){0,2}$' }
+      'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^[a-z]+-[a-z0-9]+$' }
     }
 
-    def self.rscgrpname(node, elapse, low_priority_job)
-      num_nodes = node.split('x').map(&:to_i).inject(:*)
-      elapse_time_sec = elapse.split(':').map(&:to_i).inject {|result, value| result * 60 + value}
-      is_low_priority_job = low_priority_job == 'true'
-
-      if is_low_priority_job
-        if num_nodes <= 384 && elapse_time_sec <= 43200 # <= 12h
-          'small-free'
-        elsif num_nodes <= 55296 && elapse_time_sec <= 43200 # <= 12h
-          'large-free'
-        else
-          ''
-        end
-      else
-        if num_nodes <= 384 && elapse_time_sec <= 259200 # <= 72h
-          'small'
-        elsif num_nodes <= 55296 && elapse_time_sec <= 86400 # <= 24h
-          'large'
-        else
-          ''
-        end
-      end
-    end
-
     def validate_parameters(parameters)
-      num_procs = parameters['mpi_procs'].to_i
-      num_threads = parameters['omp_threads'].to_i
-      raise 'mpi_procs and omp_threads must be larger than or equal to 1' unless num_procs >= 1 and num_threads >= 1
-
-      node_values = parameters['node'].split('x').map(&:to_i)
-      shape_values = parameters['shape'].split('x').map(&:to_i)
-      raise 'node and shape must be a same format like node=>4x3, shape=>1x1' unless node_values.length == shape_values.length
-      raise 'each # in shape must be smaller than the one of node' unless node_values.zip(shape_values).all? {|node, shape| node >= shape}
-
-      max_num_procs_per_node = parameters['max_mpi_procs_per_node'].to_i
-      raise 'max_mpi_procs_per_node times omp_threads must be less than or equal to 48' unless max_num_procs_per_node * num_threads <= 48
-
-      max_num_procs = shape_values.inject(:*) * max_num_procs_per_node
-      raise "mpi_procs must be less than or equal to #{max_num_procs}" unless num_procs <= max_num_procs
-
-      low_priority_job = parameters['low_priority_job']
-      raise 'low_priority_job must be "true" or "false"' unless ['true', 'false'].include?(low_priority_job)
     end
 
     def submit_job(script_path, work_dir, log_dir, log, parameters)
