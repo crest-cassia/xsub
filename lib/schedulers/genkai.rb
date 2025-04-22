@@ -8,7 +8,7 @@ module Xsub
 #!/bin/bash -x
 #
 #PJM -L "rscgrp=a-pj24003114"
-#PJM -L "vnode-core=1"
+#PJM -L "vnode-core=<%= vnode-core %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -j
 #PJM -S
@@ -17,13 +17,9 @@ module Xsub
 EOS
 
     PARAMETERS = {
-      'mpi_procs' => { description: 'MPI process', default: 1, format: '^[1-9]\d*$' },
-      'max_mpi_procs_per_node' => { description: 'Max MPI processes per node', default: 1, format: '^[1-9]\d*$' },
-      'omp_threads' => { description: 'OMP threads', default: 1, format: '^[1-9]\d*$' },
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
-      'node' => { description: 'Nodes', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'shape' => { description: 'Shape', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'low_priority_job' => { description: 'Low priority job(s)?', default: 'false', options: ["true", "false"] }
+      'vnode-core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
+      'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^\d+(x\d+){0,2}$' }
     }
 
     def self.rscgrpname(node, elapse, low_priority_job)
