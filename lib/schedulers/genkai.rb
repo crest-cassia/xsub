@@ -8,7 +8,7 @@ module Xsub
 #!/bin/bash -x
 #
 #PJM -L "rscgrp=<%= rscgrp %>"
-#PJM -L "vnode_core=<%= vnode-core %>"
+#PJM -L "vnode-core=<%= vnode_core %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -j
 #PJM -S
