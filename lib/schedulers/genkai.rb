@@ -10,9 +10,6 @@ module Xsub
 #PJM -L "rscgrp=<%= rscgrp %>"
 #PJM -L "vnode_core=<%= vnode-core %>"
 #PJM -L "elapse=<%= elapse %>"
-#PJM --mpi "shape=<%= shape %>"
-#PJM --mpi "proc=<%= mpi_procs %>"
-#PJM --mpi "max-proc-per-node=<%= max_mpi_procs_per_node %>"
 #PJM -j
 #PJM -S
 
@@ -24,12 +21,13 @@ EOS
       'vnode_core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
       'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^[a-z]+-[a-z0-9]+$' },
       'mpi_procs' => { description: 'MPI process', default: 1, format: '^[1-9]\d*$' },
-      'max_mpi_procs_per_node' => { description: 'Max MPI processes per node', default: 1, format: '^[1-9]\d*$' },
-      'shape' => { description: 'Shape', default: '1', format: '^\d+(x\d+){0,2}$' },
       'omp_threads' => { description: 'OMP threads', default: 1, format: '^[1-9]\d*$' }
     }
 
     def validate_parameters(parameters)
+      num_procs = parameters['mpi_procs'].to_i
+      num_threads = parameters['omp_threads'].to_i
+      raise 'mpi_procs and omp_threads must be larger than or equal to 1' unless num_procs >= 1 and num_threads >= 1
     end
 
     def submit_job(script_path, work_dir, log_dir, log, parameters)
