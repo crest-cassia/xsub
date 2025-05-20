@@ -8,7 +8,7 @@ module Xsub
 #!/bin/bash -x
 #
 #PJM -L "rscgrp=<%= rscgrp %>"
-#PJM -L "vnode-core=<%= vnode-core %>"
+#PJM -L "vnode-core=<%= vnode_core %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -j
 #PJM -S
@@ -18,11 +18,16 @@ EOS
 
     PARAMETERS = {
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
-      'vnode-core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
-      'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^[a-z]+-[a-z0-9]+$' }
+      'vnode_core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
+      'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^[a-z]+-[a-z0-9]+$' },
+      'mpi_procs' => { description: 'MPI process', default: 1, format: '^[1-9]\d*$' },
+      'omp_threads' => { description: 'OMP threads', default: 1, format: '^[1-9]\d*$' }
     }
 
     def validate_parameters(parameters)
+      num_procs = parameters['mpi_procs'].to_i
+      num_threads = parameters['omp_threads'].to_i
+      raise 'mpi_procs and omp_threads must be larger than or equal to 1' unless num_procs >= 1 and num_threads >= 1
     end
 
     def submit_job(script_path, work_dir, log_dir, log, parameters)
