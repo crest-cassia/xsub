@@ -8,7 +8,7 @@ module Xsub
 #!/bin/bash -x
 #
 #PJM -L "rscgrp=<%= rscgrp %>"
-#PJM -L "vnode-core=<%= vnode-core %>"
+#PJM -L "vnode_core=<%= vnode-core %>"
 #PJM -L "elapse=<%= elapse %>"
 #PJM -j
 #PJM -S
@@ -18,7 +18,7 @@ EOS
 
     PARAMETERS = {
       'elapse' => { description: 'Limit on elapsed time', default: '1:00:00', format: '^\d+:\d{2}:\d{2}$' },
-      'vnode-core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
+      'vnode_core' => { description: 'Cores', default: '1', format: '^\d+(x\d+){0,2}$' },
       'rscgrp' => { description: 'Resource group', default: 'a-inter', format: '^[a-z]+-[a-z0-9]+$' }
     }
 
